@@ -126,6 +126,13 @@ def get_symbolic_link (sample_list, directory):
     return files2return
 
 ###############
+def get_symbolic_link_file (file2link, newfile):
+    """Creates symbolic link for a file into a new name file"""
+    cmd = 'ln -s %s %s' %(file2link, newfile)
+    system_call_functions.system_call(cmd, returned=False)
+
+
+###############
 def extract(fileGiven, out, remove=True):
     """
     Extracts archived file

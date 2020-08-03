@@ -47,9 +47,9 @@ def readList_fromFile(fileGiven):
     return (lineList)
 
 ###########
-def retrieve_matching_files(folder, string):
+def retrieve_matching_files(folder, string, debug):
     """Lists folder path provided and given a string to search, returns all files ending with the given string"""
-    my_all_list = get_fullpath_list(folder)
+    my_all_list = get_fullpath_list(folder, debug)
     matching = [s for s in my_all_list if s.endswith(string)]
     return (matching)
 

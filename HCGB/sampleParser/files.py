@@ -174,7 +174,7 @@ def get_files(options, input_dir, mode, extension, debug):
                         files_tmp = functions.main_functions.get_fullpath_list(input_dir, debug)
                         files = [s for s in files_tmp if ext in s]
                     else:
-                        files_tmp = functions.main_functions.retrieve_matching_files(input_dir, ext)
+                        files_tmp = functions.main_functions.retrieve_matching_files(input_dir, ext, debug)
                         files = files + files_tmp
     
                 files = set(files)
