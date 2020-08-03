@@ -12,6 +12,8 @@ from termcolor import colored
 import shutil
 import concurrent.futures
 
+from HCGB import functions
+
 ###############
 def gunzip_merge(outfile, list_files):
     """
@@ -78,7 +80,7 @@ def one_file_per_sample(dataFrame, outdir_dict, threads, outdir, Debug=False):
     name_frame = pd.DataFrame(columns=name_columns)
 
     ## print to a file
-    timestamp = functions.create_human_timestamp()
+    timestamp = functions.time_functions.create_human_timestamp()
     merge_details = outdir + '/' + timestamp + '_prep_mergeDetails.txt'
     merge_details_hd = open(merge_details, 'w')
 

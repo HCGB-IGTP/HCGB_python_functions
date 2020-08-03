@@ -12,6 +12,9 @@ import re
 import pandas as pd
 from termcolor import colored
 
+from HCGB import sampleParser
+from HCGB import functions
+
 def select_samples (list_samples, samples_prefix, pair=True, exclude=False, Debug=False, lane=False, include_all=False):
     """
     Select samples
@@ -101,11 +104,11 @@ def select_samples (list_samples, samples_prefix, pair=True, exclude=False, Debu
         print ("non_duplicate_samples")
         print (non_duplicate_samples)
         print ("tmp dataframe")
-        #functions.print_all_pandaDF(tmp)
+        functions.main_functions.print_all_pandaDF(tmp)
         print(tmp)
                 
     ## get info
-    name_frame_samples = get_fields(non_duplicate_samples, pair, Debug, include_all)    
+    name_frame_samples = sampleParser.files.get_fields(non_duplicate_samples, pair, Debug, include_all)    
     number_files = name_frame_samples.index.size
     total_samples = set(name_frame_samples['name'].to_list())
     
@@ -138,5 +141,108 @@ def select_samples (list_samples, samples_prefix, pair=True, exclude=False, Debu
     
     ## return info
     return (name_frame_samples)
+###############
+
 
 ###############
+def select_other_samples (project, list_samples, samples_prefix, mode, extensions, exclude=False, Debug=False):
+
+    ## init dataframe
+    name_columns = ("sample", "dirname", "name", "ext", "tag")
+
+    ## initiate dataframe
+    df_samples = pd.DataFrame(columns=name_columns)
+
+    ## debug message
+    if (Debug):
+        print (colored("**DEBUG: samples_prefix **", 'yellow'))
+        print (samples_prefix)
+        print (colored("**DEBUG: mode **", 'yellow'))
+        print (mode)
+        print (colored("**DEBUG: extensions **", 'yellow'))
+        print (extensions)
+
+    #Get all files in the folder "path_to_samples"    
+    for names in samples_prefix:
+        for path_file in list_samples:    
+            f = os.path.basename(path_file)
+            dirN = os.path.dirname(path_file)
+            #samplename_search = re.search(r"(%s).*" % names, f)
+            samplename_search = re.search(r"(%s).*" % names, path_file)
+            
+            enter = ""
+            if samplename_search:
+                if (exclude): ## exclude==True
+                    enter = False
+                else: ## exclude==True
+                    enter = True
+            else:
+                if (exclude): ## exclude==True
+                    enter = True
+                else: ## exclude==True
+                    enter = False
+                    
+            if enter:
+                
+                ## project mode:
+                if project:
+                    if mode == 'annot':
+                        #### /path/to/folder/annot/name.faa
+                        for ext in extensions:
+                            f_search = re.search(r".*\/%s\/(.*)\.%s$" %(mode, ext), path_file)
+                            if f_search:
+                                file_name = f_search.group(1) 
+                                df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+
+                    elif mode== 'assembly':
+                        #### name_assembly.faa
+                        for ext in extensions:
+                            f_search = re.search(r"(.*)\_%s\.%s$" %(mode, ext), f)
+                            if f_search:
+                                file_name = f_search.group(1) 
+                                df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+
+                    elif mode== 'mash':
+                        #### name.sig
+                        for ext in extensions:
+                            f_search = re.search(r".*\/%s\/(.*)\.%s$" %(mode, ext), path_file)
+                            if f_search:
+                                file_name = f_search.group(1) 
+                                df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+
+                    else:
+                        for ext in extensions:
+                            f_search = re.search(r".*\/(.*)\/%s\/(.*)\_summary\.%s$" %(mode, ext), path_file)
+                            if f_search:
+                                ### get information
+                                if mode == 'profile':
+                                    name = f_search.group(1)
+                                    db_name = f_search.group(2).split('_')[-1]
+                                    if not name.startswith('report'):
+                                        df_samples.loc[len(df_samples)] = [path_file, dirN, name, db_name, mode]    
+    
+                                elif mode == 'ident':
+                                    name = f_search.group(1)
+                                    df_samples.loc[len(df_samples)] = [path_file, dirN, name, 'csv', mode]    
+
+                ## detached mode
+                else:
+                    for ext in extensions:
+                        if f.endswith(ext):
+                            file_name, ext1 = os.path.splitext(f)
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, db_name, mode]    
+                        
+    ## debug message
+    if (Debug):
+        print (colored("**DEBUG: df_samples **", 'yellow'))
+        print (df_samples)
+    
+    ##
+    number_samples = df_samples.index.size
+    if (number_samples == 0):
+        print (colored("\n**ERROR: No samples were retrieved for this option. Continue processing...\n",'red'))
+        return (df_samples)
+    print (colored("\t" + str(number_samples) + " samples selected from the input provided...", 'yellow'))
+
+    df_samples['new_name'] = df_samples['name']
+    return (df_samples)

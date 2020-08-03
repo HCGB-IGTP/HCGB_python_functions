@@ -289,7 +289,7 @@ def get_files(options, input_dir, mode, extension, debug):
     ## get information
     if mode in ['fastq', 'trim', 'join']:
         pd_samples_retrieved = sampleParser.samples.select_samples(files, samples_names, options.pair, exclude, options.debug, options.include_lane, options.include_all)
-    #else:
-    #    pd_samples_retrieved = sampleParser.samples.select_other_samples(options.project, files, samples_names, mode, extension, exclude, options.debug)        
+    else:
+        pd_samples_retrieved = sampleParser.samples.select_other_samples(options.project, files, samples_names, mode, extension, exclude, options.debug)        
         
     return(pd_samples_retrieved)

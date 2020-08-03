@@ -21,8 +21,9 @@ With different purposes:
 ## useful imports
 import time
 from datetime import datetime
-from HCGB_python_functions import aesthetics_functions
 
+## my modules
+from HCGB.functions import aesthetics_functions
 
 ###########################
 ##      TIME            ###

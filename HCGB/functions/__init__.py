@@ -8,5 +8,5 @@ __all__ = [
     'time_functions'
 ]
 
-from HCGB_python_functions import *
+from HCGB.functions import *
 

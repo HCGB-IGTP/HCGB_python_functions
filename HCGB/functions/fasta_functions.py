@@ -24,7 +24,7 @@ from Bio import SeqIO
 from termcolor import colored
 
 ##
-from HCGB_python_functions import system_call_functions
+from HCGB.functions import system_call_functions
 
 #################################
 ###         FASTA files        ##

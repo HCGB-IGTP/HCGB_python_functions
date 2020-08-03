@@ -22,7 +22,7 @@ With different purposes:
 from termcolor import colored
 import os
 
-from HCGB_python_functions import system_call_functions
+from HCGB.functions import system_call_functions
 
 ##########################
 ###        BLAST       ###

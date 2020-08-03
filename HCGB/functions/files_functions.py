@@ -24,7 +24,7 @@ import patoolib ## to extract
 import os
 
 ##
-from HCGB_python_functions import system_call_functions
+from HCGB.functions import system_call_functions
 
 ############################################################################
 ########                     FILES/FOLDERS                            ########                     

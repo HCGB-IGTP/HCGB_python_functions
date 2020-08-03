@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
     long_description_text = fh.read()
 
 setuptools.setup(
-    name="HCGB_python_functions",
-    version="0.1.0",
+    name="HCGB",
+    version="0.2.0",
 
     author="Jose F. Sanchez-Herrero",
 
