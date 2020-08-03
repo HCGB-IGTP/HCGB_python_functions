@@ -1,0 +1,14 @@
+## compiler
+*__pycache__/
+*pyc
+
+## eclipse
+.project
+.pydevproject
+
+## pip module
+*.egg-info
+dist
+build
+.pypirc
+
