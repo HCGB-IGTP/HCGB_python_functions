@@ -19,8 +19,11 @@ With different purposes:
     - Other miscellaneous functions
 """
 ## useful imports
+import sys
 import os
 import pandas as pd
+import urllib.request
+from HCGB import functions
 
 ###################################
 ##     General main functions    ##
@@ -157,4 +160,63 @@ def decode(x):
         return s
     except:
         return x
+
+##################
+def urllib_request(folder, url_string, file_name, debug):
+    
+    file_name_unzipped="n.a."
+    zipped=False
+    
+    ## add more compression types if necessary
+    if file_name.endswith('gz'):
+        zipped=True
+        file_name_unzipped = file_name.split('.gz')[0]
+    else:
+        file_name_unzipped = file_name    
+    ### debugging messages
+    if debug:
+        print ("folder: ", folder)
+        print ("url_string: ",url_string)
+        print ("file_name:", file_name)
+        print ("Zip: ", zipped)
+        print ("file_name_unzipped: ", file_name_unzipped)
+        
+    
+    ## timestamp
+    filename_stamp = folder + '/.success'
+    file_path_name = os.path.join(folder, file_name)
+    file_path_name_unzipped = os.path.join(folder, file_name_unzipped)
+    
+    ## check if previously exists
+    if os.path.exists(file_path_name) or os.path.exists(file_path_name_unzipped):
+        ## debug message
+        if debug:
+            print ("## Debug: File %s exists in folder" %file_name)
+    
+        ## check if previously timestamp generated
+        if os.path.isfile(filename_stamp):
+            stamp = functions.time_functions.read_time_stamp(filename_stamp)
+            print ("\tFile (%s) Previously downloaded in: %s" %(file_name, stamp))
+            return(file_path_name_unzipped)
+    else:
+        ## debug message
+        if debug:
+            print ("## Debug: Download file: ", file_name, ":: ", url_string)
+        
+        # downloads
+        urllib.request.urlretrieve(url_string, file_path_name )
+        
+        ## check if correctly download
+        if os.path.exists(file_path_name):
+            functions.time_functions.print_time_stamp(filename_stamp)
+        else:
+            sys.exit('Could not download file %s (%s)' %(file_name, url_string))
+
+        ## extract if zipped
+        if (zipped):
+            functions.files_functions.extract(file_path_name, out=folder)
+            return (file_path_name_unzipped)
+            
+        else:
+            return(file_path_name)
 
