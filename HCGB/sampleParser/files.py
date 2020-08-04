@@ -132,10 +132,11 @@ def get_files(options, input_dir, mode, extension, debug):
     Given an input dir and a mode in retrieves
     matching files with the extension desired.
     
-    :param options: XICRA options as parser.parse_args options.
+    :param options: Contains several options as parser.parse_args options.
     :param input_dir: Absolute path to input dir containing samples.
-    :param mode: Options are: fastq, trim, annot, assembly.
+    :param mode: Options are: fastq, trim, annot, assembly, etc...
     :param extension: List of possible extension to retrieve.
+    :param debug
     
     :type options: parser.parse_args
     :type input_dir: string 
@@ -143,6 +144,17 @@ def get_files(options, input_dir, mode, extension, debug):
     :type extension: list
     
     :returns: Pandas dataframe with sample and file information.
+    
+    options contains:
+        + options.debug bool
+        + options.project bool
+        + options.batch bool
+        + options.pair bool
+        + options.include_all bool
+        + options.include_lane bool
+        + options.in_sample file or string
+        + options.ex_sample file or string    
+    
     """
     ## get list of input files
     files = []

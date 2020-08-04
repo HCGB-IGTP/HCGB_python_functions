@@ -1,7 +1,6 @@
 # Description
 This is a basic python module that contains multiple functions used in different projects.
 
-
 ## Contents
 
 HCGB/sampleParser:
@@ -20,5 +19,9 @@ HCGB/functions:
 * files_functions.py  
 * system_call_functions.py
 
+## Copyright & License
+MIT License
+Copyright (c) 2020 HCGB-IGTP
 
+http://www.germanstrias.org/technology-services/genomica-bioinformatica/
 

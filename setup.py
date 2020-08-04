@@ -6,17 +6,18 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="HCGB",
-    version="0.2.3",
+    version="0.2.4.1",
 
     author="Jose F. Sanchez-Herrero",
+    description="Useful python functions",
 
     author_email="jfbioinformatics@gmail.com",
-  
+
     long_description_content_type="text/markdown",
     long_description=long_description_text,
- 
+
     url="https://github.com/HCGB-IGTP/HCGB_python_functions/",
- 
+
     packages=setuptools.find_packages(),
     license='MIT License',
 
