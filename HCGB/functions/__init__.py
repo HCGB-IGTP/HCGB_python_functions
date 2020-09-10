@@ -5,6 +5,7 @@ __all__ = [
     'files_functions',
     'main_functions',
     'system_call_functions',
+    'math_functions',
     'time_functions'
 ]
 

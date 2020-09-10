@@ -89,13 +89,13 @@ def get_fullpath_list(dir_given, Debug):
         for f in files:
             return_path.append(os.path.join(root,f))
 
-    if Debug:
-        print ("** DEBUG:\nroot: ", root)
-        print ("Dirs: ")
-        print (dirs)
-        print ("Files: ")
-        print (files)
-    
+        if Debug:
+            print ("** DEBUG:\nroot: ", root)
+            print ("Dirs: ")
+            print (dirs)
+            print ("Files: ")
+            print (files)
+        
     ## returns list of files
     return return_path
 
@@ -104,6 +104,9 @@ def get_data(ID_file, SEP, options):
     if options == 'index_col=0':
         data = pd.read_csv(ID_file, sep=SEP, index_col=0)
         return(data)
+    elif options == 'header=None':
+        data = pd.read_csv(ID_file, sep=SEP, header=None)
+        return(data)    
     else:
         data = pd.read_csv(ID_file, sep=SEP)
         return(data)

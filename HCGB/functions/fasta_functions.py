@@ -22,7 +22,7 @@ With different purposes:
 import re
 from Bio import SeqIO
 from termcolor import colored
-
+from collections import defaultdict
 ##
 from HCGB.functions import system_call_functions
 
@@ -73,7 +73,7 @@ def rename_fasta_seqs(fasta_file, name, new_fasta):
     
     if len(name) > 37:
         print (colored("** ERROR **", 'red'))
-        print (colored("BacterialTyper.functions.rename_fasta_seqs():: name id is > 37 characters.", 'red'))
+        print (colored("rename_fasta_seqs():: name id is > 37 characters.", 'red'))
         print (colored("** ERROR **", 'red'))
         return ('FAIL')
     
@@ -94,5 +94,42 @@ def rename_fasta_seqs(fasta_file, name, new_fasta):
     id_conversion.close()
         
     return (new_fasta + "_conversionID.txt")
+
+### 
+def process_fasta(lines):
+    ks = ['name', 'sequence']
+    return {k: v for k, v in zip(ks, lines)}
+
+### 
+def process_fastq(lines):
+    ks = ['name', 'sequence', 'optional', 'quality']
+    return {k: v for k, v in zip(ks, lines)}
+
+#####
+def reads2tabular(fastq_file, out):
     
+    ## dictionary
+    freq_fasta = defaultdict(int)
+    
+    ## read fastq    
+    n = 4
+    with open(fastq_file, 'r') as fh:
+        lines = []
+        for line in fh:
+            lines.append(line.rstrip())
+            if len(lines) == n:
+                record = process_fastq(lines)
+                #sys.stderr.write("Record: %s\n" % (str(record)))
+                lines = []
+                
+                ## add sequences & count
+                freq_fasta[record['sequence']] += 1
+
+    ## print in file
+    with open(out,'w') as file:
+        for k in sorted (freq_fasta.keys()):
+            file.write("%s\t%s\n" % (k, freq_fasta[k]))
+    
+    return(freq_fasta)
+
 
