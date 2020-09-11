@@ -25,14 +25,21 @@ from termcolor import colored
 ############################################################################
 ########                     AESTHETICS                             ########
 ############################################################################
-def pipeline_header():
+def pipeline_header(option):
     """
     Prints a common header for the pipeline including name, author, copyright and year.        
     """
+    
     print ("\n")
     print_sepLine("#", 70, False)
-    print('#', '{: ^66}'.format("BacterialTyper pipeline"), '#')
-    print('#', '{: ^66}'.format("Jose F. Sanchez, Cristina Prat & Lauro Sumoy"), '#')
+    
+    if (option == 'XICRA'):
+        print('#', '{: ^66}'.format("XICRA pipeline"), '#')
+        print('#', '{: ^66}'.format("Jose F. Sanchez & Lauro Sumoy"), '#')
+    elif (option == 'BacterialTyper'):
+        print('#', '{: ^66}'.format("BacterialTyper pipeline"), '#')
+        print('#', '{: ^66}'.format("Jose F. Sanchez, Cristina Prat & Lauro Sumoy"), '#')
+    
     print('#', '{: ^66}'.format("Copyright (C) 2019-2020 Lauro Sumoy Lab, IGTP, Spain"), '#')
     print_sepLine("#", 70, False)
 
