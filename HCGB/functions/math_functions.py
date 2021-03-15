@@ -17,5 +17,8 @@ def percentage(percent, whole):
     percent_search = re.search(r"(.*)%", percent)
     if percent_search:
         percent_int = float(percent_search.group(1))
+    else:
+        percent_int = percent
+        
     value = (percent_int * whole) / 100.0
     return int(value)
