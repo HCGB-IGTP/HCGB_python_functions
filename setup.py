@@ -27,6 +27,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'pandas', 'patool', 'termcolor', 'biopython', 'wget', 'filehash'
+        'pandas', 'patool', 'termcolor', 'biopython', 'wget'
     ],
 )
