@@ -72,5 +72,5 @@ def progbar(curr, total, full_progbar):
     
 ###############
 def debug_message(message, color='red'):
-    print (colored("*** DEBUG: %s" %(message)), color)   
+    print (colored("*** DEBUG: %s" %(message), color))   
 
