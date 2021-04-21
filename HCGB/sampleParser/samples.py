@@ -223,14 +223,28 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
     
                                 elif mode == 'ident':
                                     name = f_search.group(1)
-                                    df_samples.loc[len(df_samples)] = [path_file, dirN, name, 'csv', mode]    
-
+                                    df_samples.loc[len(df_samples)] = [path_file, dirN, name, 'csv', mode]
+                                    
+                            else:
+                                #### common: path/sample_name/job/info.csv
+                                for ext in extensions:
+                                    f_search = re.search(r"(.*)\/%s\/(.*)\.%s$" %(mode, ext), path_file)
+                                    if f_search:
+                                        file_name = os.path.basename(f_search.group(1))
+                                        df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]
+                                    else:
+                                        f_search2 = re.search(r"(.*)\/%s\/%s$" %(mode, ext), path_file)
+                                        if f_search2:
+                                            file_name = os.path.basename(f_search2.group(1))
+                                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+                                            
+                                    
                 ## detached mode
                 else:
                     for ext in extensions:
                         if f.endswith(ext):
                             file_name, ext1 = os.path.splitext(f)
-                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, db_name, mode]    
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext1, mode]    
                         
     ## debug message
     if (Debug):
