@@ -89,13 +89,6 @@ def get_fullpath_list(dir_given, Debug):
         for f in files:
             return_path.append(os.path.join(root,f))
 
-        if Debug:
-            print ("** DEBUG:\nroot: ", root)
-            print ("Dirs: ")
-            print (dirs)
-            print ("Files: ")
-            print (files)
-        
     ## returns list of files
     return return_path
 
@@ -222,4 +215,25 @@ def urllib_request(folder, url_string, file_name, debug):
             
         else:
             return(file_path_name)
+
+###################
+def create_excel_file(file_name, dict_data, SEP=",", options="index_col=0", debug=False):
+    '''
+    :param file_name: Absolute file path name for the file to write in xlsx format.
+    :param dict_data: Dictionary containing as key the name for the tab and as a value an absolute file path to dump in each tab.
+    '''
+    
+    ## write to excel
+    writer_Excel = pd.ExcelWriter(file_name, engine='xlsxwriter') ## open excel handle
+    
+    ## loop over dictionary and print dataframe
+    for name, each_data in dict_data.items():
+        if debug:
+            print ("Name: ", name)
+            print ("Data: ", each_data)
+            
+        each_df = get_data(each_data, SEP, options)
+        each_df.to_excel(writer_Excel, sheet_name=name) ## write excel handle
+            
+    writer_Excel.save() ## close excel handle
 
