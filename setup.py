@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="HCGB",
-    version="0.3.3",
+    version="0.3.5",
 
     author="Jose F. Sanchez-Herrero",
     description="Useful python functions",
@@ -27,6 +27,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'pandas', 'patool', 'termcolor', 'biopython', 'wget', 'filehash', 'xlsxwriter'
+        'pandas', 'patool', 'termcolor', 'biopython', 'wget', 'xlsxwriter'
     ],
 )

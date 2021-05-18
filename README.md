@@ -21,7 +21,7 @@ HCGB/functions:
 
 ## Copyright & License
 MIT License
-Copyright (c) 2020 HCGB-IGTP
+Copyright (c) 2020-2021 HCGB-IGTP
 
 http://www.germanstrias.org/technology-services/genomica-bioinformatica/
 

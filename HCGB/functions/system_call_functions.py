@@ -73,10 +73,11 @@ def wget_download(url, path):
 
 ###############
 def check_md5sum(string, File):
+    ## FIXME: Not conda supported
     return(True)
 
 #    md5hasher = FileHash('md5')
-#    md5_file = md5hasher.hash_file(File) ## FIXME: Not conda supported
+#    md5_file = md5hasher.hash_file(File) 
 #    
 #    if (md5_file == string):
 #        #print (md5_file + '==' + string)
