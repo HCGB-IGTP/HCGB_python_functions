@@ -1,5 +1,5 @@
 {% set name = "HCGB" %}
-{% set version = "0.3.1" %}
+{% set version = "0.3.2" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,7 +7,7 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: 711db79a7d7dad7364c0f0e0495a3c58ce49a4cbbe0f523c8e6fdea3af335b7c
+  sha256: b474df7d93c7d5926ff17645d3919a93e3a075f7e2810c25df67cd76548dab03
 
 build:
   number: 0
@@ -16,7 +16,6 @@ build:
 requirements:
   host:
     - biopython
-    - filehash
     - pandas
     - patool
     - pip
@@ -25,7 +24,6 @@ requirements:
     - wget
   run:
     - biopython
-    - filehash
     - pandas
     - patool
     - python
@@ -34,8 +32,6 @@ requirements:
 
 test:
   imports:
-    - HCGB
-    - HCGB.config
     - HCGB.functions
     - HCGB.sampleParser
 
@@ -50,4 +46,4 @@ about:
 
 extra:
   recipe-maintainers:
-    - your-github-id-here
+    - JFsanchezherrero

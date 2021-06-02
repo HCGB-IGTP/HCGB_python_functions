@@ -29,12 +29,12 @@ from HCGB.functions import system_call_functions
 ##########################
 
 ###############
-def makeblastdb(DBname, fasta, makeblastDBexe):
+def makeblastdb(DBname, fasta, makeblastDBexe, dbtype='nucl'):
     ## generate blastdb for genome
     if (os.path.isfile(DBname + '.nhr')):
         print ("+ BLAST database is already generated...")
     else:
-        cmd_makeblast = "%s -in %s -input_type fasta -dbtype %s -out %s" %(makeblastDBexe, fasta, 'nucl', DBname)
+        cmd_makeblast = "%s -in %s -input_type fasta -dbtype %s -out %s" %(makeblastDBexe, fasta, dbtype, DBname)
         code = system_call_functions.system_call(cmd_makeblast)
 
         if (code == 'FAIL'):

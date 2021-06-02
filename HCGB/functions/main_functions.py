@@ -40,7 +40,15 @@ def printList2file(fileGiven, listGiven):
     """Prints list given in the output file provided. One item per row."""
     file_hd = open(fileGiven, 'w')
     file_hd.write("\n".join(listGiven))
-    file_hd.close()  
+    file_hd.close()
+
+#################
+def printDict2file(fileGiven, dictGiven, split_char):
+    """Prints dictionary given in the output file provided. One item per row."""
+    with open(fileGiven, 'w') as file_hd:
+        for key in dictGiven.keys():
+            file_hd.write("%s%s%s\n"%(key, split_char, dictGiven[key]))
+    file_hd.close()
 
 #################
 def readList_fromFile(fileGiven):
