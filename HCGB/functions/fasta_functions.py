@@ -133,3 +133,5 @@ def reads2tabular(fastq_file, out):
     return(freq_fasta)
 
 
+
+

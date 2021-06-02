@@ -6,6 +6,9 @@
 .project
 .pydevproject
 
+## environmet
+env/
+
 ## pip module
 *.egg-info
 dist

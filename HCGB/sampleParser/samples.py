@@ -141,8 +141,6 @@ def select_samples (list_samples, samples_prefix, pair=True, exclude=False, Debu
     
     ## return info
     return (name_frame_samples)
-###############
-
 
 ###############
 def select_other_samples (project, list_samples, samples_prefix, mode, extensions, exclude=False, Debug=False):
@@ -245,13 +243,14 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
                         if f.endswith(ext):
                             file_name, ext1 = os.path.splitext(f)
                             df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext1, mode]    
-                        
+
     ## debug message
     if (Debug):
         print (colored("**DEBUG: df_samples **", 'yellow'))
         print (df_samples)
+        print ("test OK")
     
-    ##
+    ## print stats
     number_samples = df_samples.index.size
     if (number_samples == 0):
         print (colored("\n**ERROR: No samples were retrieved for this option. Continue processing...\n",'red'))
