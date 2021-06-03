@@ -153,7 +153,7 @@ def extract(fileGiven, out, remove=True):
     
     """
     ## extract using patoolib
-    patoolib.extract_archive(fileGiven, outdir=out, verbosity=0)
+    patoolib.extract_archive(fileGiven, outdir=out, verbosity=0) ## CHECK conda supported
     
     if (remove):
         ## remove compress file

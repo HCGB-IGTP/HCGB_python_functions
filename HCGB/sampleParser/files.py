@@ -242,12 +242,12 @@ def get_files(options, input_dir, mode, extension, debug):
     exclude=False
 
     if (options.in_sample):
-        if os.path.isfile(os.path.abspath(options.in_sample)):
+        if os.path.isfile(os.path.abspath(options.in_sample)): ## a file
             in_file = os.path.abspath(options.in_sample)
             samples_names = [line.rstrip('\n') for line in open(in_file)]
             print ('+ Retrieve selected samples to obtain from the list files available.')
-        else:
-            samples_names = options.in_sample
+        else: ## a single ID
+            samples_names = [options.in_sample]
         
         exclude=False
 
@@ -258,11 +258,14 @@ def get_files(options, input_dir, mode, extension, debug):
 
 
     elif (options.ex_sample):
-        ex_file = os.path.abspath(options.ex_sample)
-        samples_names = [line.rstrip('\n') for line in open(ex_file)]
-        print ('+ Retrieve selected samples to exclude from the list files available.')        
-        exclude=True
-
+        if os.path.isfile(os.path.abspath(options.ex_sample)): ## a file
+            ex_file = os.path.abspath(options.ex_sample)
+            samples_names = [line.rstrip('\n') for line in open(ex_file)]
+            print ('+ Retrieve selected samples to exclude from the list files available.')        
+            exclude=True
+        else: ## a single ID
+            samples_names = [options.ex_sample]
+        
         ## in sample list...
         if (options.debug):
             print (colored("\n**DEBUG: sampleParser.get_files exclude sample list **", 'yellow'))
