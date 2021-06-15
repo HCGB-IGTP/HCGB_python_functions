@@ -22,6 +22,7 @@ With different purposes:
 import time
 from datetime import datetime
 
+
 ## my modules
 from HCGB.functions import aesthetics_functions
 
@@ -73,14 +74,17 @@ def read_time_stamp (out):
     return(stamp)
 
 ###############    
-def get_diff_time(stamp):
+def get_diff_time(stamp_file):
     """Obtains the time spent for a process in days given a stamp in time.time() format.
     Returns days passed since.
     """
-
     time_today = time.time()
-    elapsed = time_today - float(time_today)
-    days_passed = int((elapsed/3600)/24)
+    st_hd = open(stamp_file, 'r')
+    stamp = st_hd.read()
+    st_hd.close()
+    elapsed = float(stamp) - time_today
+    days_passed = abs(round((elapsed/3600)/24))
+    
     return(days_passed)
 
 ###############    
