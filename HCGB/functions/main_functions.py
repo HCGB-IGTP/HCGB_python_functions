@@ -87,7 +87,7 @@ def file2dataframe(file2read, names):
     return(d)
 
 #################
-def get_fullpath_list(dir_given, Debug):
+def get_fullpath_list(dir_given):
     """Retrieve full absolute path for the files within a directory specified.
 
     :param dir_given: Directory to retrieve files
