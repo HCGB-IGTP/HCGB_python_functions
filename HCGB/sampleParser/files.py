@@ -169,7 +169,7 @@ def get_files(options, input_dir, mode, extension, debug):
                 for d in dir_list:
                     if os.path.exists(d):
                         print ('+ Folder (%s) exists' %d)
-                        files = files + functions.main_functions.get_fullpath_list(d, debug)
+                        files = files + functions.main_functions.get_fullpath_list(d)
                     else:
                         ## input folder does not exist...
                         if (options.debug):
@@ -183,7 +183,7 @@ def get_files(options, input_dir, mode, extension, debug):
                 ## get files in folder
                 for ext in extension:
                     if mode == 'trim':
-                        files_tmp = functions.main_functions.get_fullpath_list(input_dir, debug)
+                        files_tmp = functions.main_functions.get_fullpath_list(input_dir)
                         files = [s for s in files_tmp if ext in s]
                     else:
                         files_tmp = functions.main_functions.retrieve_matching_files(input_dir, ext, debug)
@@ -208,7 +208,7 @@ def get_files(options, input_dir, mode, extension, debug):
                 for d in dir_list:
                     if os.path.exists(d):
                         print ('+ Folder (%s) exists' %d)
-                        files_tmp = functions.main_functions.get_fullpath_list(d, debug)
+                        files_tmp = functions.main_functions.get_fullpath_list(d)
                         files = files + files_tmp
             
                     else:
@@ -222,7 +222,7 @@ def get_files(options, input_dir, mode, extension, debug):
             if os.path.exists(input_dir):
                 print ('+ Input folder exists')
                 ## get files in folder
-                files = functions.main_functions.get_fullpath_list(input_dir, debug)
+                files = functions.main_functions.get_fullpath_list(input_dir)
             else:
                 ## input folder does not exist...
                 if (options.debug):

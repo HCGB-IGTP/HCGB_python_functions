@@ -60,7 +60,7 @@ def readList_fromFile(fileGiven):
 ###########
 def retrieve_matching_files(folder, string, debug, starts=False):
     """Lists folder path provided and given a string to search, returns all files ending with the given string"""
-    my_all_list = get_fullpath_list(folder, debug)
+    my_all_list = get_fullpath_list(folder)
     if starts:
         matching = [s for s in my_all_list if s.startswith(string)]
     else:

@@ -6,6 +6,7 @@ __all__ = [
     'main_functions',
     'system_call_functions',
     'math_functions',
+    'info_functions',
     'time_functions'
     
 ]
