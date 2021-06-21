@@ -8,7 +8,7 @@ import json
 import os
 import HCGB.functions.aesthetics_functions as HCGB_aes
 
-###################
+######################################
 def dump_info_run(out_folder, module, userinput, runInfo, debug):
     """
     Prints information of the job run in json format
@@ -23,7 +23,7 @@ def dump_info_run(out_folder, module, userinput, runInfo, debug):
     
     :returns: Prints information in json format in the output folder provided.
     
-    Exampple of infromation to include:
+    Example of information to include:
     
     userinput = {"filename":infiles, 
                 "database":path_to_database,
@@ -44,8 +44,11 @@ def dump_info_run(out_folder, module, userinput, runInfo, debug):
     userinput_dict = vars(userinput)
     del userinput_dict['func']
     
-    ## merge dictionaries
-    data = {**runInfo, **userinput_dict}
+    ## merge dictionaries:: data = {**runInfo, **userinput_dict}
+    
+    ## add sub dictionary
+    data = runInfo.copy()
+    data['input_options'] = userinput_dict
     
     ## debug messages
     if debug:
@@ -69,5 +72,12 @@ def dump_info_run(out_folder, module, userinput, runInfo, debug):
     # Save json output
     result_json_file = os.path.join(out_folder, module + ".json") 
     with open(result_json_file, "w") as outfile:  
-       json.dump(data, outfile)
+        json.dump(data, outfile, indent=3)
+
+######################################
+def compare_info_dict(dict1, dict2, listItems, debug):
+    """Given a pair of dictionaries and a list of items, compare values."""
+    print()
+    
+    
     

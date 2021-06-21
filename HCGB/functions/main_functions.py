@@ -23,7 +23,10 @@ import sys
 import os
 import pandas as pd
 import urllib.request
+import json
+
 from HCGB import functions
+import HCGB.functions.aesthetics_functions as HCGB_aes
 
 ###################################
 ##     General main functions    ##
@@ -58,7 +61,7 @@ def readList_fromFile(fileGiven):
     return (lineList)
 
 ###########
-def retrieve_matching_files(folder, string, debug, starts=False):
+def retrieve_matching_files(folder, string, debug=False, starts=False):
     """Lists folder path provided and given a string to search, returns all files ending with the given string"""
     my_all_list = get_fullpath_list(folder)
     if starts:
@@ -87,7 +90,7 @@ def file2dataframe(file2read, names):
     return(d)
 
 #################
-def get_fullpath_list(dir_given):
+def get_fullpath_list(dir_given, debug=False):
     """Retrieve full absolute path for the files within a directory specified.
 
     :param dir_given: Directory to retrieve files
@@ -99,7 +102,8 @@ def get_fullpath_list(dir_given):
     for root, dirs, files in os.walk(dir_given):
         for f in files:
             return_path.append(os.path.join(root,f))
-            #print(dirs)
+            if debug:
+                print(dirs)
 
     ## returns list of files
     return return_path
@@ -249,3 +253,20 @@ def create_excel_file(file_name, dict_data, SEP=",", options="index_col=0", debu
             
     writer_Excel.save() ## close excel handle
 
+######################################
+def read_json_file(file, debug=False):
+    """Read information in json format"""
+
+    if debug:
+        HCGB_aes.debug_message("Read JSON information:", 'yellow')
+        HCGB_aes.debug_message("file: " + file, 'yellow')
+    
+    with open(file) as json_file:
+        data=json.load(json_file)
+
+    if debug:
+        print(data)
+    
+    ## return json
+    return (data)
+    
