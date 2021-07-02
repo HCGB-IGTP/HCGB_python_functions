@@ -26,7 +26,6 @@ import urllib.request
 import json
 
 from HCGB import functions
-import HCGB.functions.aesthetics_functions as HCGB_aes
 
 ###################################
 ##     General main functions    ##
@@ -258,8 +257,8 @@ def read_json_file(file, debug=False):
     """Read information in json format"""
 
     if debug:
-        HCGB_aes.debug_message("Read JSON information:", 'yellow')
-        HCGB_aes.debug_message("file: " + file, 'yellow')
+        functions.aesthetics_functions.debug_message("Read JSON information:", 'yellow')
+        functions.aesthetics_functions.debug_message("file: " + file, 'yellow')
     
     with open(file) as json_file:
         data=json.load(json_file)

@@ -6,7 +6,7 @@
 
 import json
 import os
-import HCGB.functions.aesthetics_functions as HCGB_aes
+from HCGB import functions
 
 ######################################
 def dump_info_run(out_folder, module, userinput, runInfo, debug):
@@ -52,19 +52,19 @@ def dump_info_run(out_folder, module, userinput, runInfo, debug):
     
     ## debug messages
     if debug:
-        HCGB_aes.debug_message("Dump information:", 'yellow')
+        functions.aesthetics_functions.debug_message("Dump information:", 'yellow')
         print()
-        HCGB_aes.debug_message("runInfo:", 'yellow')
+        functions.aesthetics_functions.debug_message("runInfo:", 'yellow')
         print(runInfo)
         print(type(runInfo))
         print()
         
-        HCGB_aes.debug_message("userinput_dict:", 'yellow')
+        functions.aesthetics_functions.debug_message("userinput_dict:", 'yellow')
         print(userinput_dict)
         print(type(userinput_dict))
         print()
         
-        HCGB_aes.debug_message("data:", 'yellow')
+        functions.aesthetics_functions.debug_message("data:", 'yellow')
         print(data)
         print(type(data))
         print()
