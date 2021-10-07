@@ -14,6 +14,7 @@ from termcolor import colored
 
 from HCGB import functions
 from HCGB import sampleParser
+from HCGB.functions.aesthetics_functions import debug_message 
 
 ###############
 def get_fields(file_name_list, pair, Debug, include_all):
@@ -46,31 +47,6 @@ def get_fields(file_name_list, pair, Debug, include_all):
         dirN = os.path.dirname(path_files)
         trim_search = re.search(r".*trim.*", file_name)
         lane_search = re.search(r".*\_L\d+\_.*", file_name)
-        ## get name
-        if (include_all):
-            if (pair):
-                name_search = re.search(r"(.*)\_(R1|1|R2|2)\_{0,1}(.*)\.(f.*q)(\..*){0,1}", file_name)
-            else:
-                name_search = re.search(r"(.*)\.(f.*q)(\..*){0,1}", file_name)
-
-        else:    
-            if (pair):
-                ## pair could be: R1|R2 or 1|2
-                if (trim_search):
-                    name_search = re.search(r"(.*)\_trim\_(R1|1|R2|2)\.(f.*q)(\..*){0,1}", file_name)
-                    
-                else:
-                    ## Lane files: need to merge by file_name: 33i_S5_L004_R1_001.fastq.gz
-                    ## lane should contain L00x            
-                    if (lane_search):
-                        name_search = re.search(r"(.*)\_(L\d+)\_(R1|1|R2|2)\_{0,1}(.*)\.(f.*q)(\..*){0,1}", file_name)
-                    else:
-                        name_search = re.search(r"(.*)\_(R1|1|R2|2)\.(f.*q)(\..*){0,1}", file_name)
-            else:
-                if (trim_search):
-                    name_search = re.search(r"(.*)\_trim(.*)\.(f.*q)(\..*){0,1}", file_name) ## trim.fastq or trim_joined.fastq
-                else:
-                    name_search = re.search(r"(.*)\.(f.*q)(\..*){0,1}", file_name)
         
         ### declare
         name= ""
@@ -79,33 +55,116 @@ def get_fields(file_name_list, pair, Debug, include_all):
         lane_file= ""
         ext= ""
         gz= ""
-    
-        if name_search:
-            name = name_search.group(1)
-            name_len = len(name)
+        
+        ## get name
+        if (include_all):
             if (pair):
-                if (include_all):
-                    lane_id = ""
-                    read_pair = name_search.group(2)
-                    lane_file = name_search.group(3)
-                    ext = name_search.group(4)
-                    gz = name_search.group(5)
-                                
-                ## Lane files: need to merge by file_name: 33i_S5_L004_R1_001.fastq.gz
-                elif (lane_search):
-                    lane_id = name_search.group(2)
-                    read_pair = name_search.group(3)
-                    lane_file = name_search.group(4)
-                    ext = name_search.group(5)
-                    gz = name_search.group(6)
+                if (trim_search):
+                    name_search = re.search(r"(.*)\_trim\_(R1|1|R2|2)\.(f.*q)(\..*){0,1}", file_name)
                 else:
-                    ## could exist or not
+                    name_search = re.search(r"(.*)\_(R1|1|R2|2)\_{0,1}(.*)\.(f.*q)(\..*){0,1}", file_name)
+            
+                lane_id = ""
+                read_pair = name_search.group(2)
+                lane_file = ""
+                ext = name_search.group(3)
+                gz = name_search.group(4)
+            
+            else:
+                if (trim_search):
+                    name_search = re.search(r"(.*)\_trim(.*)\.(f.*q)(\..*){0,1}", file_name) ## trim.fastq or trim_joined.fastq
+                else:
+                    name_search = re.search(r"(.*)\.(f.*q)(\..*){0,1}", file_name)
+                
+                ext = name_search.group(2)
+                gz = name_search.group(3)
+                
+        else:    
+            if (pair):
+                ## pair could be: R1|R2 or 1|2
+                if (trim_search):
+                    name_search = re.search(r"(.*)\_trim\_(R1|1|R2|2)\.(f.*q)(\..*){0,1}", file_name)
+                    
                     read_pair = name_search.group(2)
                     ext = name_search.group(3)
                     gz = name_search.group(4)
+                    
+                else:
+                    ## Lane files: need to merge by file_name: 33i_S5_L004_R1_001.fastq.gz
+                    ## lane should contain L00x            
+                    if (lane_search):
+                        name_search = re.search(r"(.*)\_(L\d+)\_(R1|1|R2|2)\_{0,1}(.*)\.(f.*q)(\..*){0,1}", file_name)
+
+                        lane_id = name_search.group(2)
+                        read_pair = name_search.group(3)
+                        lane_file = name_search.group(4)
+                        ext = name_search.group(5)
+                        gz = name_search.group(6)
+                        
+                    else:
+                        name_search = re.search(r"(.*)\_(R1|1|R2|2)\.(f.*q)(\..*){0,1}", file_name)
+                        
+                        read_pair = name_search.group(2)
+                        ext = name_search.group(3)
+                        gz = name_search.group(4)
             else:
-                ext = name_search.group(2)
-                gz = name_search.group(3)
+                if (trim_search):
+                    if (lane_search):
+                        name_search = re.search(r"(.*)\_(L\d+)\_{0,1}(.*)\.(f.*q)(\..*){0,1}", file_name)
+
+                        lane_id = name_search.group(2)
+                        lane_file = name_search.group(3)
+                        ext = name_search.group(4)
+                        gz = name_search.group(5)
+
+                    else:
+                        name_search = re.search(r"(.*)\_trim(.*)\.(f.*q)(\..*){0,1}", file_name) ## trim.fastq or trim_joined.fastq
+                    
+                        ext = name_search.group(2)
+                        gz = name_search.group(3)
+                else:
+                    name_search = re.search(r"(.*)\.(f.*q)(\..*){0,1}", file_name)
+                    
+                    ext = name_search.group(2)
+                    gz = name_search.group(3)
+        
+        if name_search:
+            name = name_search.group(1)
+            name_len = len(name)
+            
+            if (Debug):
+                debug_message("Search for sample names: ")
+                debug_message("File: " + path_files)
+                debug_message("Name: " + name_search.group(1))
+                debug_message("Lane: " + lane_id)
+                debug_message("Pair: " + read_pair)
+                debug_message("Lane file: " + lane_file)
+                debug_message("Ext: " + ext)
+                debug_message(gz)
+    
+            # if (pair):
+            #     if (include_all):
+            #         lane_id = ""
+            #         read_pair = name_search.group(2)
+            #         lane_file = name_search.group(3)
+            #         ext = name_search.group(4)
+            #         gz = name_search.group(5)
+            #
+            #     ## Lane files: need to merge by file_name: 33i_S5_L004_R1_001.fastq.gz
+            #     elif (lane_search):
+            #         lane_id = name_search.group(2)
+            #         read_pair = name_search.group(3)
+            #         lane_file = name_search.group(4)
+            #         ext = name_search.group(5)
+            #         gz = name_search.group(6)
+            #     else:
+            #         ## could exist or not
+            #         read_pair = name_search.group(2)
+            #         ext = name_search.group(3)
+            #         gz = name_search.group(4)
+            # else:
+            #     ext = name_search.group(2)
+            #     gz = name_search.group(3)
     
             ## populate dataframe
             name_frame.loc [len(name_frame)] = (path_files, dirN, name, name, name_len, 
