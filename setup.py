@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="HCGB",
-    version="0.4.1",
+    version="0.5",
 
     author="Jose F. Sanchez-Herrero",
     description="Useful python functions",
