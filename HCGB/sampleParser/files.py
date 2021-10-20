@@ -66,9 +66,9 @@ def get_fields(file_name_list, pair, Debug, include_all):
             
                 lane_id = ""
                 read_pair = name_search.group(2)
-                lane_file = ""
-                ext = name_search.group(3)
-                gz = name_search.group(4)
+                lane_file = name_search.group(3)
+                ext = name_search.group(4)
+                gz = name_search.group(5)
             
             else:
                 if (trim_search):
@@ -349,8 +349,13 @@ def get_files(options, input_dir, mode, extension, debug):
     files = [s for s in files if 'unjoin' not in s]
     files = [s for s in files if '00.0_0.cor.' not in s]
     
+    ## skip using trim if fastq mode provided
     if (mode == 'fastq'):
         files = [s for s in files if 'trim' not in s]
+    
+    ## skip using join if trimm mode provided    
+    if (mode == 'trim'):
+        files = [s for s in files if 'joined' not in s]
     
     ##
     files = list(filter(None, files)) ## empty space
