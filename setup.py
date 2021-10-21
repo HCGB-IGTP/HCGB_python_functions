@@ -20,6 +20,10 @@ def get_version(version_file):
     with open(version_file, 'r') as f:
         v = f.readline().strip()
 
+    return v
+
+
+
 
 long_description_text = ""
 with open("README.md", "r") as fh:
