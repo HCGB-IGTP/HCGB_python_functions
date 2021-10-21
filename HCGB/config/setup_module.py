@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+############################################################
+## Jose F. Sanchez                                        ##
+## Copyright (C) 2019-2021 Lauro Sumoy Lab, IGTP, Spain   ##
+############################################################
+
 #######
 def get_require_modules(given_file):
     """

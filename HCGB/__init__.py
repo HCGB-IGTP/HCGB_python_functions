@@ -1,6 +1,7 @@
 __all__ = [
     'sampleParser',
-    'functions'
+    'functions',
+    'config'
 ]
 
 from HCGB import *

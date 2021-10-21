@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 import setuptools
+from devel import setup_module
 
 long_description_text = ""
 with open("README.md", "r") as fh:
@@ -6,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="HCGB",
-    version=HCGB.config.setup_module.get_version("./VERSION"),
+    version=setup_module.get_version("./VERSION"),
 
     author="Jose F. Sanchez-Herrero",
     description="Useful python functions",
@@ -26,6 +28,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=HCGB.config.setup_module.get_require_modules("./HCGB/config/pythobn_requirements.txt"),
+    install_requires=setup_module.get_require_modules("./HCGB/config/python_requirements.txt"),
     #['pandas', 'termcolor', 'biopython', 'wget', 'xlsxwriter', 'patool'],
 )
