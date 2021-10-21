@@ -28,6 +28,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    include_package_data=True,
     install_requires=setup_module.get_require_modules("./HCGB/config/python_requirements.txt"),
-    #['pandas', 'termcolor', 'biopython', 'wget', 'xlsxwriter', 'patool'],
 )
