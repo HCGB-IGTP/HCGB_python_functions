@@ -1,6 +1,25 @@
 #!/usr/bin/env python3
 import setuptools
-from devel import setup_module
+
+#######
+def get_require_modules(given_file):
+    """
+    Get main python requirements modules
+    """
+    with open(given_file, 'r') as f:
+        myModules = [line.strip().split(',')[0] for line in f]
+    
+    return myModules
+
+#######
+def get_version(version_file):
+    """
+    Original code: PhiSpy setup.py 
+    https://github.com/linsalrob/PhiSpy/blob/master/setup.py
+    """
+    with open(version_file, 'r') as f:
+        v = f.readline().strip()
+
 
 long_description_text = ""
 with open("README.md", "r") as fh:
@@ -8,7 +27,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="HCGB",
-    version=setup_module.get_version("./VERSION"),
+    version=get_version("./VERSION"),
 
     author="Jose F. Sanchez-Herrero",
     description="Useful python functions",
@@ -29,5 +48,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     include_package_data=True,
-    install_requires=setup_module.get_require_modules("./HCGB/config/python_requirements.txt"),
+    install_requires=get_require_modules("./HCGB/config/python_requirements.txt"),
 )
