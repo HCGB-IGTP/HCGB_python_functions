@@ -31,6 +31,11 @@ from HCGB.functions import system_call_functions
 ############################################################################
 
 ###############
+def get_file_name(fpath):
+    name = os.path.splitext(os.path.basename(fpath))[0]
+    return (name)
+
+###############
 def is_non_zero_file(fpath):  
     # https://stackoverflow.com/a/15924160
     """Returns TRUE/FALSE if file exists and non zero"""
