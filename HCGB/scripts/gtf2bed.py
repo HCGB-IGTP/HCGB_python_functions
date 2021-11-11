@@ -26,16 +26,16 @@ import re
 import pandas as pd
 import HCGB.functions.aesthetics_functions as HCGB_aes
 
-global allids
 allids = {}
-
-global data_bed
 data_bed = pd.DataFrame(columns=["chr", "start", "end", "transcript_id", "gene_id", "transcript_biotype",
-                                 "fpkm", "strand", "start", "end", "RGB", 
+                                 "fpkm", "strand", "thickstart", "thickend", "RGB", 
                                  "estart", "strs", "strl"])
 
 ############################################################
 def printbedline(estart, eend, field, nline, debug=False):
+    
+    global data_bed
+    
     ## debug messages    
     if debug:
         HCGB_aes.debug_message("GTF line: ", "yellow")
@@ -91,7 +91,7 @@ def printbedline(estart, eend, field, nline, debug=False):
     
     ## Previous transcript ID
     if transid in allids.keys():
-        transid2=transid+'_DUP'+str(allids[transid])
+        #transid2=transid+'_DUP'+str(allids[transid])
         allids[transid]=allids[transid]+1
     ## New transcript ID
     else:
@@ -129,8 +129,6 @@ def printbedline(estart, eend, field, nline, debug=False):
     data_bed.loc[transid, "start"] = str(estp)
     data_bed.loc[transid, "end"] = str(eedp) 
     data_bed.loc[transid, "transcript_id"] = transid
-    data_bed.loc[transid, "gene_id"] = gene_id
-    data_bed.loc[transid, "transcript_biotype"] = transcript_biotype
     data_bed.loc[transid, "fpkm"] = str(fpkmint)
     data_bed.loc[transid, "strand"] = field[6]
     data_bed.loc[transid, "thickstart"] = str(estp)
@@ -139,6 +137,8 @@ def printbedline(estart, eend, field, nline, debug=False):
     data_bed.loc[transid, "estart"] = len(estart)
     data_bed.loc[transid, "strl"] = strl
     data_bed.loc[transid, "strs"] = strs
+    data_bed.loc[transid, "gene_id"] = gene_id
+    data_bed.loc[transid, "transcript_biotype"] = transcript_biotype
     
     ## debug messages    
     if debug:        
@@ -147,6 +147,10 @@ def printbedline(estart, eend, field, nline, debug=False):
 
 ############################################################
 def parse_GTF(gtf_file, out_file, debug=False):
+    
+    global data_bed
+
+    
     ## Start the parsing of GTF
 
     ## Init variables 
@@ -210,7 +214,7 @@ def parse_GTF(gtf_file, out_file, debug=False):
             # Reset
             estart=[]
             eend=[]
-        
+                    
         ## ---------------------------------
         prevfield=field
         prevtransid=transid
@@ -238,12 +242,15 @@ def parse_GTF(gtf_file, out_file, debug=False):
     ## ---------------------------------
     ## print information info file and or return
     ## ---------------------------------
-    ## remove some unnecessary columns in data_bed
+    ## reorder columns in data_bed
+    data_bed = data_bed[["chr", "start", "end", "transcript_id", "fpkm", "strand", "thickstart", "thickend", "RGB", 
+                                 "estart", "strs", "strl", "gene_id", "transcript_biotype"]]
+    ## write in tsv
+    data_bed.to_csv(out_file, sep="\t", index=False, header=False)
 
     ## ---------------------------------
     ## return when finished
-    return(data_bed)
-
+    return(data_bed) 
 ############################################################
 def main():
     ## this code runs when call as a single script
@@ -265,7 +272,7 @@ def main():
         out_file = "example.bed"
     
     ## parse 
-    parse_GTF(sys.argv[1], out_file, False)
+    parse_GTF(sys.argv[1], out_file, True)
 
     ## final
     print(data_bed)

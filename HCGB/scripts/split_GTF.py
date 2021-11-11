@@ -12,42 +12,122 @@ It is also possible to split according to chromosome (one gtf/chromosome)
 """
 
 import os
-import sys
 import re
-import pandas as pd
-import HCGB.functions.aesthetics_functions as HCGB_aes
 import argparse;
 import traceback
+from termcolor import colored
+
+import HCGB.functions.aesthetics_functions as HCGB_aes
+import HCGB.functions.time_functions as HCGB_time
 import HCGB.functions.files_functions as HCGB_files
 
 ############################################################
-def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
+def create_names_GTF(GTFfile, name_file, chr_option, num_files, debug=False):
     """
-    This functions splits given GTF into multiple files, either a given number of files or
-    one for each chromosome.
+    Creates names for subsets of GTF files generated.
+    
+    It retrieves list of sequences in the GTF, and generates name for each subset.
+    """
+    ##
+    dict_files_generated = {}
+    
+    if debug:
+        print()
+        HCGB_aes.debug_message("********************** create_names_GTF ********************** ", "yellow")
+        HCGB_aes.debug_message("Create name for GTF subsets", "yellow")
+    
+    ## Chromosome option
+    if chr_option:
+        
+        ## get list of entries
+        with open(GTFfile) as f:
+            list2 = [row.split()[0] for row in f]
+            
+            ## get uniq
+            list2  = set(list2)
+            
+            ## remove # characters
+            list2 = [x for x in list2 if not x.startswith('#')]
+            
+        
+        ## create files for list of entries
+        for seq in list2:
+            file_name = name_file + "-Chr_" + str(seq) + ".gtf"
+            dict_files_generated["Chr_" + str(seq)] = file_name
 
+    if debug:
+        print()
+        HCGB_aes.debug_message("dict_files_generated: " + str(dict_files_generated), "yellow")
+        print()
+        HCGB_aes.debug_message("--------------------- create_names_GTF --------------------- ", "yellow")
+        print()
+        
+    ## return
+    return dict_files_generated
+
+############################################################
+def split_GTF_call(GTFfile, num_files, name, chr_option, path_given=False, debug=False):
+    """
+    This functions checks if it has been done previously the split of GTF. 
+    If done, returns dict with files names generated using create_names_GTF.
+    If GTF split not done, it calls split_GTF function. 
+    
     :param GTFfile: Absolute path to GTF file to split
     :param num_files: Number of files to create with equal number of lines
     :param name: Name to include in the files names generated. By default, GTF basename included.
-    :param chr: TRUE/FALSE If chr option provided, split GTF into chromosome, scaffolds or reference sequences.
+    :param chr_option: TRUE/FALSE If chr_option provided, split GTF into chromosome, scaffolds or reference sequences.
     :param path_given: Path to save results. Default use absolute path of GTF file provided
     :param debug: TRUE/FALSE for debugging messages
     """
 
-    dict_files_generated = {}
-
+    ## debug messaging    
     if debug:
-        HCGB_aes.debug_message("split_GTF function", "yellow")
-        HCGB_aes.debug_message("GTFfile: " + GTFfile, "yellow")
-        HCGB_aes.debug_message("num_files: " + str(num_files), "yellow")        
-        HCGB_aes.debug_message("name provided: " + name, "yellow")
-        HCGB_aes.debug_message("chr: " + str(chr), "yellow")
+        print()
+        HCGB_aes.debug_message("********************** split_GTF_call ********************** ")
+        HCGB_aes.debug_message("Checking if GTF has been previously splitted", "yellow")
+    
+    ## get absolute path and name
+    name_file = get_path_name(GTFfile, path_given, name, debug=debug)
 
-    ## Check file is readable
-    if not (HCGB_files.is_non_zero_file(GTFfile)):
-        print("ERROR: File not readable. Please check path for file:\n" + GTFfile)
-        exit()
+    filename_stamp = path_given + '/.split_GTF_success'
+    if os.path.isfile(filename_stamp):
+        
+        if debug:
+            HCGB_aes.debug_message("Timestamp exists: .split_GTF_success ", "yellow")
 
+        ## check file names generated and return names
+        files_generated = create_names_GTF(GTFfile, name_file, chr_option, num_files, debug=debug)
+        
+        re_run=False
+        for files_GTF in files_generated.values():
+            if not HCGB_files.is_non_zero_file(files_GTF):
+                re_run=True
+                
+                if debug:
+                    print()
+                    HCGB_aes.debug_message("It is required to re-run split GTF: File is zero or does not exists\n" + files_GTF, "yellow")
+                
+                break
+        if not re_run:
+            stamp = HCGB_time.read_time_stamp(filename_stamp)
+            print (colored("\tA previous command generated results on: %s [%s]" %(stamp, 'split GTF'), 'yellow'))
+            return (files_generated)
+
+    ## call to split GTF
+    files_generated = split_GTF(GTFfile, num_files, name, chr_option, path_given, debug)
+    
+    ## print time stamp
+    HCGB_time.print_time_stamp(filename_stamp)
+    
+    if debug:
+        HCGB_aes.debug_message("********************** split_GTF_call ********************** ")
+    
+    
+    return (files_generated)    
+    
+############################################################
+def get_path_name(GTFfile, path_given, name, debug=False):
+    
     ## get absolute path
     if (path_given):
         ## save files in given dir
@@ -58,9 +138,52 @@ def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
     ## get name
     if not name:
         name=HCGB_files.get_file_name(GTFfile)
-        print(name)
-        
-    name = os.path.join(path_given, name)
+
+    ## crete name and path
+    name2 = os.path.join(path_given, name)
+    
+    ## debugging messages
+    if debug:
+        print()
+        HCGB_aes.debug_message("********************************** get_path_name **********************************", "yellow")
+        HCGB_aes.debug_message("GTFfile: " + GTFfile, "yellow")
+        HCGB_aes.debug_message("path_given: " + path_given, "yellow")
+        HCGB_aes.debug_message("name: " + name, "yellow")        
+        HCGB_aes.debug_message("name2: " + name2, "yellow")
+        HCGB_aes.debug_message("--------------------- get_path_name --------------------- ", "yellow")
+    ## 
+    return (name2)
+
+############################################################
+def split_GTF(GTFfile, num_files, name, chr_option, path_given=False, debug=False):
+    """
+    This functions splits given GTF into multiple files, either a given number of files or
+    one for each chromosome.
+
+    :param GTFfile: Absolute path to GTF file to split
+    :param num_files: Number of files to create with equal number of lines
+    :param name: Name to include in the files names generated. By default, GTF basename included.
+    :param chr_option: TRUE/FALSE If chr_option provided, split GTF into chromosome, scaffolds or reference sequences.
+    :param path_given: Path to save results. Default use absolute path of GTF file provided
+    :param debug: TRUE/FALSE for debugging messages
+    """
+    ## init dict to store files generated
+    dict_files_generated = {}
+
+    if debug:
+        print()
+        HCGB_aes.debug_message("*************************** split_GTF ***************************", "yellow")
+        HCGB_aes.debug_message("GTFfile: " + GTFfile, "yellow")
+        HCGB_aes.debug_message("num_files: " + str(num_files), "yellow")        
+        HCGB_aes.debug_message("chr_option: " + str(chr), "yellow")
+
+    ## Check file is readable
+    if not (HCGB_files.is_non_zero_file(GTFfile)):
+        print("ERROR: File not readable. Please check path for file:\n" + GTFfile)
+        exit()
+
+    ## get absolute path and name
+    name = get_path_name(GTFfile, path_given, name, debug=debug)
 
     if debug:
         HCGB_aes.debug_message("path_given: " + path_given, "yellow")
@@ -69,19 +192,26 @@ def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
     print("")
         
     ## Get options
-    if (chr):
+    if (chr_option):
         ## Prevalence of chr split if provided.
         print("+ Splitting file by sequence...")
         
         try:
             #read a file
-            lineCount=0
             fileReader = open(GTFfile)
+            
+            ## skip comments at the beginning of files
+            while True:
+                line = fileReader.readline()
+                if not line.startswith('#'):
+                    break
+                
+            lineCount=0
             line = fileReader.readline()
             field=line.strip().split('\t')
             chrid=field[0]
 
-            file_name = name + "-Chr_" + str(chrid) + ".txt"
+            file_name = name + "-Chr_" + str(chrid) + ".gtf"
             dict_files_generated["Chr_" + str(chrid)] = file_name
              
             stop=False
@@ -94,7 +224,7 @@ def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
                     field=line.strip().split('\t')
                     chrid=field[0]
 
-                    file_name = name + "-Chr_" + str(chrid) + ".txt"
+                    file_name = name + "-Chr_" + str(chrid) + ".gtf"
                     dict_files_generated["Chr_" + str(chrid)] = file_name
                     fileWriter = open(file_name,"a") ## append as it might be some repetiteve elements at the end                
 
@@ -163,7 +293,7 @@ def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
             #read a file
             fileReader = open(GTFfile)
             line = fileReader.readline()
-            file_name = name + "-" + str(fileCount) + ".txt"
+            file_name = name + "-" + str(fileCount) + ".gtf"
             dict_files_generated[name + "-" + str(fileCount)] = file_name
 
             stop=False
@@ -173,7 +303,7 @@ def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
                 ## create new file
                 if lineCount == 0:
                     #create a file in append mode
-                    file_name = name + "-" + str(fileCount) + ".txt" 
+                    file_name = name + "-" + str(fileCount) + ".gtf" 
                     dict_files_generated[name + "-" + str(fileCount)] = file_name
                     fileWriter = open(file_name,"w")
                     #increment file count, use it for new file name
@@ -244,6 +374,13 @@ def split_GTF(GTFfile, num_files, name, chr, path_given=False, debug=False):
             fileReader.close()
 
     ##
+    if debug:
+        print()
+        HCGB_aes.debug_message("dict_files_generated: " + str(dict_files_generated), "yellow")
+        print()
+        HCGB_aes.debug_message("*************************** split_GTF ***************************", "yellow")
+        
+    
     return(dict_files_generated)
 
 ############################################################
@@ -274,7 +411,9 @@ def main():
     
     ## lets split the big file provided
     files_generated = split_GTF(os.path.abspath(args.input), num_files=args.num_files, name=args.name, 
-              chr=args.split_chromosome, path_given=args.path, debug=True)
+              chr_option=args.split_chromosome, path_given=args.path, debug=True)
+    
+    print(files_generated)
     
 
 ############################################################
