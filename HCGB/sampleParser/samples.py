@@ -208,6 +208,16 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
                                 file_name = f_search.group(1) 
                                 df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
 
+                    elif mode== 'miRNA':
+                        #### counts/mirtop.tsv
+                        for ext in extensions:
+                            f_search = re.search(r".*\/data\/(.*)\/%s\/(.*)\/counts\/%s$" %(mode, ext), path_file)
+
+                            if f_search:
+                                sample_name = f_search.group(1)
+                                soft_name = f_search.group(2).split("_")[0] ## miraligner_miRTop
+                                df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
+
                     else:
                         for ext in extensions:
                             f_search = re.search(r".*\/(.*)\/%s\/(.*)\_summary\.%s$" %(mode, ext), path_file)

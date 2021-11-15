@@ -335,6 +335,7 @@ def get_files(options, input_dir, mode, extension, debug):
 
     ## discard empty sample_names
     samples_names = list(filter(None, samples_names)) ## empty space
+    samples_names = set(samples_names)
 
     ## discard some files obtain
     files = [s for s in files if '.bam' not in s]
@@ -359,12 +360,14 @@ def get_files(options, input_dir, mode, extension, debug):
     
     ##
     files = list(filter(None, files)) ## empty space
+    files = set(files) ## unique results
+    
         
     ## files list...
     if (options.debug):
         print (colored("\n**DEBUG: sampleParser.get_files files list to check **", 'yellow'))
         print ('DO NOT PRINT THIS LIST: It could be very large...')
-        ##print (files, '\n')
+        print (files, '\n')
 
     ## get information
     if mode in ['fastq', 'trim', 'join']:
