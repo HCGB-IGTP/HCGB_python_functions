@@ -1,5 +1,5 @@
 __all__ = [
-    'split_GTF',
+    'file_splitter',
     'gtf2bed'
 ]
 

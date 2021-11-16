@@ -32,9 +32,6 @@ import HCGB.functions.files_functions as HCGB_files
 import HCGB.functions.time_functions as HCGB_time
 
 allids = {}
-data_bed = pd.DataFrame(columns=["chr", "start", "end", "transcript_id", "gene_id", "transcript_biotype",
-                                 "fpkm", "strand", "thickstart", "thickend", "RGB", 
-                                 "estart", "strs", "strl"])
 
 ############################################################
 def parse_GTF_call(gtf_file, out_file, debug=False):
@@ -108,8 +105,6 @@ def savebedline(estart, eend, field, nline, debug):
     
     :returns: String to write in BED format.
     """
-    
-    #global data_bed
     
     ## debug messages    
     if debug:

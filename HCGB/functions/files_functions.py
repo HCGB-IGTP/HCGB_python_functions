@@ -3,6 +3,7 @@
 ## Jose F. Sanchez                                        ##
 ## Copyright (C) 2019-2020 Lauro Sumoy Lab, IGTP, Spain   ##
 ############################################################
+from curses.ascii import NUL
 """
 Shared functions used along ``BacterialTyper`` & ``XICRA`` pipeline.
 With different purposes:
@@ -25,15 +26,11 @@ import os
 
 ##
 from HCGB.functions import system_call_functions
+from HCGB.functions import aesthetics_functions
 
 ############################################################################
 ########                     FILES/FOLDERS                            ########                     
 ############################################################################
-
-###############
-def get_file_name(fpath):
-    name = os.path.splitext(os.path.basename(fpath))[0]
-    return (name)
 
 ###############
 def is_non_zero_file(fpath):  
@@ -165,4 +162,66 @@ def extract(fileGiven, out, remove=True):
         print ("Remove compress file...")
         os.remove(fileGiven)
         print ("\n")
+
+###############
+def get_file_name(fpath):
+    base_name = os.path.splitext(os.path.basename(fpath))[0]
+    return (base_name)
+
+############################################################
+def get_path_name(file_given, path_given="", name="", debug=False):
+    """
+    Produces an absolute path name given a file and either a file and or name.
+    
+    There are several options:
+    
+    ## Option 1:
+    file_given: /home/data/example.txt
+    path_given: NA
+    name: NA
+    
+    Returns: /home/data/example
+    
+    ## Option 2:
+    file_given: ../../data/example.txt
+    path_given: /home/here
+    name: NA
+    
+    Returns: /home/here/example    
+    
+    
+    ## Option 3:
+    file_given: ../../data/example.txt
+    path_given: /home/here
+    name: test
+    
+    Returns: /home/here/test        
+    """
+    
+    
+    ## get absolute path
+    if (path_given):
+        ## save files in given dir
+        path_given = os.path.abspath(path_given)
+    else:
+        path_given = os.path.dirname(file_given)
+
+    ## get name
+    if name=="" or not name:
+        name = get_file_name(file_given)
+
+    ## create name and path
+    name2 = os.path.join(path_given, name)
+    
+    ## debugging messages
+    if debug:
+        print()
+        aesthetics_functions.debug_message("********************************** get_path_name **********************************", "yellow")
+        aesthetics_functions.debug_message("file_given: " + file_given, "yellow")
+        aesthetics_functions.debug_message("path_given: " + path_given, "yellow")
+        aesthetics_functions.debug_message("name: " + name, "yellow")        
+        aesthetics_functions.debug_message("name to Return: " + name2, "yellow")
+        aesthetics_functions.debug_message("--------------------- get_path_name --------------------- ", "yellow")
+    ## 
+    return (name2)
 
