@@ -16,7 +16,6 @@ import re
 import argparse;
 import traceback
 from termcolor import colored
-from math import ceil
 
 import HCGB.functions.aesthetics_functions as HCGB_aes
 import HCGB.functions.time_functions as HCGB_time
@@ -40,16 +39,24 @@ def create_names(file2split, name_file, chr_option, num_files, in_format, debug=
     ########################
     if chr_option:
         
+        print(file2split)
+        
         ## get list of entries
         with open(file2split) as f:
-            list2 = [row.split()[0] for row in f]
             
+            list2 = []
+            for row in f:
+                row = row.rstrip() ## remove empty line
+                if row:
+                    item_chr = row.split()[0]
+                    list2.append(item_chr)
+                
             ## get uniq
             list2  = set(list2)
             
             ## remove # characters
             list2 = [x for x in list2 if not x.startswith('#')]
-            
+                  
         ## create files for list of entries
         for seq in list2:
             file_name = name_file + "-Chr_" + str(seq) + "." + in_format.lower()
@@ -97,8 +104,21 @@ def split_file_call(given_file, num_files, name, chr_option, in_format, path_giv
         HCGB_aes.debug_message("********************** split_file_call ********************** ")
         HCGB_aes.debug_message("Checking if file has been previously splitted", "yellow")
     
+
+    print("+ Splitting file provided: " + given_file)
+    
+    if path_given:
+        path_given = os.path.abspath(path_given)
+        HCGB_files.create_folder(path_given)
+        print("+ Output: " + path_given)
+    else:
+        path_given = os.getcwd()
+        print("+ Output: Current working directory: " + path_given )
+    
     ## get absolute path and name
     name_file = HCGB_files.get_path_name(given_file, path_given, name, debug=debug)
+
+    print("+ Checking if previously done...")
 
     filename_stamp = path_given + '/.split_file_success'
     if os.path.isfile(filename_stamp):
@@ -108,7 +128,7 @@ def split_file_call(given_file, num_files, name, chr_option, in_format, path_giv
 
         ## check file names generated and return names
         files_generated = create_names(given_file, name_file, chr_option, num_files, in_format, debug=debug)
-        
+
         re_run=False
         for f in files_generated.values():
             if not HCGB_files.is_non_zero_file(f):
@@ -121,11 +141,16 @@ def split_file_call(given_file, num_files, name, chr_option, in_format, path_giv
                 break
         if not re_run:
             stamp = HCGB_time.read_time_stamp(filename_stamp)
+            print("")
             print (colored("\tA previous command generated results on: %s [%s]" %(stamp, 'split file'), 'yellow'))
             return (files_generated)
 
+    print("+ Not previously done or some error ocurred during the process")
+    print()
+    print("+ Let's do it now!")
+
     ## call to split 
-    files_generated = split_file(given_file, num_files, name, chr_option, in_format, path_given, debug)
+    files_generated = split_file(given_file, num_files, name_file, chr_option, in_format, path_given, debug)
     
     ## print time stamp
     HCGB_time.print_time_stamp(filename_stamp)
@@ -167,12 +192,16 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
         exit()
 
     ## get absolute path and name
-    name = HCGB_files.get_path_name(given_file, path_given, name, debug=debug)
+    #name = HCGB_files.get_path_name(given_file, path_given, name, debug=debug)
 
     if debug:
         HCGB_aes.debug_message("name: " + name, "yellow")
     
     print("")
+    
+    #read a file
+    fileReader = open(given_file)
+            
         
     ## Get options
     if (chr_option):
@@ -186,69 +215,77 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
         print("+ Splitting file by reference sequence...")
         
         try:
-            #read a file
-            fileReader = open(given_file)
-            
             ## skip comments at the beginning of files
             while True:
                 line = fileReader.readline()
                 if not line.startswith('#'):
                     break
-                
+            
             lineCount=0
-            line = fileReader.readline()
+            line = line.rstrip()
             field=line.strip().split('\t')
             chrid=field[0]
              
             stop=False
             line2=""
-
-            while line != '':#empty is EOF
-                ## create new file
-                if lineCount == 0:
-                    #create a file in append mode
+    
+            while True: 
+                
+                # empty line
+                line = line.rstrip()
+                if line:
                     field=line.strip().split('\t')
                     chrid=field[0]
+                
+                    ## create new file
+                    if lineCount == 0:
+                        #create a file in append mode
+                        print("********")
+                        print(line)
+                        print(chrid)
+                        print("********")
+                        
+                        ## open file
+                        fileWriter = open(dict_files_generated["Chr_" + str(chrid)],"a") ## append as it might be some repetitive elements at the end                
+        
+                    #write a line
+                    fileWriter.write(line + '\n')
                     
-                    ## open file
-                    fileWriter = open(dict_files_generated["Chr_" + str(chrid)],"a") ## append as it might be some repetitive elements at the end                
-
-                #write a line
-                fileWriter.write(line)
-                
-                ## Debug messages
-                if debug:
-                    HCGB_aes.debug_message("Chr: " + str(chrid), "red")
-                    HCGB_aes.debug_message("line: " + line, "red")
-                
-                ## stop when Chr changes
-                while True:
-                    field=line.strip().split('\t')
-                    chrid=field[0]
-
-                    ## read new line
-                    line2 = fileReader.readline()
-                    field2=line2.strip().split('\t')
-                    chrid2=field2[0]
-
-                    ## debug messages    
+                    ## Debug messages
                     if debug:
+                        HCGB_aes.debug_message("Chr: " + str(chrid), "red")
                         HCGB_aes.debug_message("line: " + line, "red")
-                        HCGB_aes.debug_message("line2: " + line2, "red")
-                        HCGB_aes.debug_message("geneid: " + chrid, "yellow")
-                        HCGB_aes.debug_message("chrid2: " + chrid2, "yellow")
+                    
+                    ## stop when Chr changes
+                    while True:
+                        ## read new line
+                        line2 = fileReader.readline()
+                        line2 = line2.rstrip()
 
-                    ##
-                    if (chrid == chrid2):
-                        fileWriter.write(line2)
-                        line=line2
-                    else:
-                        ## init
-                        lineCount = 0
-                        fileWriter.close()
-                        line=line2
-                        break
-
+                        field2=line2.strip().split('\t')
+                        chrid2=field2[0]
+        
+                        ## debug messages    
+                        if debug:
+                            HCGB_aes.debug_message("line: " + line, "red")
+                            HCGB_aes.debug_message("line2: " + line2, "red")
+                            HCGB_aes.debug_message("geneid: " + chrid, "yellow")
+                            HCGB_aes.debug_message("chrid2: " + chrid2, "yellow")
+        
+                        ##
+                        if (chrid == chrid2):
+                            fileWriter.write(line2 + '\n')
+                            line=line2
+                            
+                        else:
+                            ## init
+                            lineCount = 0
+                            fileWriter.close()
+                            line=line2
+                            break
+                else:
+                    break
+    
             ## Close GTF File        
             fileWriter.close()
         
@@ -261,6 +298,9 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
             fileReader.close()
 
     else:
+        
+        print("+ Splitting file into a given number of files... " + str(num_files) + ' files requested')
+
         ###############################################3
         ## Split into several files as provided.
         ###############################################3
@@ -279,85 +319,97 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
             
         try:
             #read a file
-            fileReader = open(given_file)
-            line = fileReader.readline()
-
+            ## skip comments at the beginning of files
+            while True:
+                line = fileReader.readline()
+                if not line.startswith('#'):
+                    break
+    
             stop=False
             line2=""
+            
+            line = line.rstrip()
+            
+            while True:
+                # empty line
+                line = line.rstrip()
+                if line:
+                    field=line.strip().split('\t')
 
-            while line != '':#empty is EOF
-                ## create new file
-                if lineCount == 0:
-                    #create a file in write mode
-                    fileWriter = open(dict_files_generated["File_" + str(fileCount)],"w")
-                    #increment file count, use it for new file name
-                    fileCount += 1
-
-                #write a line
-                fileWriter.write(line)
-                
-                ## sum to lines
-                lineCount += 1
-
-                ## Debug messages
-                if debug:
-                    HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
-                    HCGB_aes.debug_message("line: " + line, "red")
-                
-                ## stop when max_lines_file achieved
-                if lineCount == fileLineCount:
+                    ## create new file
+                    if lineCount == 0:
+                        #create a file in write mode
+                        fileWriter = open(dict_files_generated["File_" + str(fileCount)],"w")
+                        #increment file count, use it for new file name
+                        fileCount += 1
+    
+                    #write a line
+                    fileWriter.write(line + '\n')
                     
-                    if in_format=="GTF":
-                        ## If GTF file provided, control we are not splitting genes
-                        while True:
-                            field=line.strip().split('\t')
-                            geneid=re.findall(r'gene_id \"([\w\.]+)\"',field[8])
+                    ## sum to lines
+                    lineCount += 1
     
-                            ## read new line
-                            line2 = fileReader.readline()
-                            lineCount2 = lineCount + 1
-                            field2=line2.strip().split('\t')
-                            geneid2=re.findall(r'gene_id \"([\w\.]+)\"',field2[8])
-    
-                            ## debug messages    
-                            if debug:
-                                HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
-                                HCGB_aes.debug_message("line: " + line, "red")
-                                HCGB_aes.debug_message("lineCount2: " + str(lineCount2), "red")
-                                HCGB_aes.debug_message("line2: " + line2, "red")
-                                HCGB_aes.debug_message("geneid: " + geneid[0], "yellow")
-                                HCGB_aes.debug_message("geneid2: " + geneid2[0], "yellow")
+                    ## Debug messages
+                    if debug:
+                        HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
+                        HCGB_aes.debug_message("line: " + line, "red")
+                    
+                    ## stop when max_lines_file achieved
+                    if lineCount == fileLineCount:
+                        
+                        if in_format=="GTF":
+                            ## If GTF file provided, control we are not splitting genes
+                            while True:
+                                field=line.strip().split('\t')
+                                geneid=re.findall(r'gene_id \"([\w\.]+)\"',field[8])
+        
+                                ## read new line
+                                line2 = fileReader.readline()
+                                lineCount2 = lineCount + 1
+                                field2=line2.strip().split('\t')
+                                geneid2=re.findall(r'gene_id \"([\w\.]+)\"',field2[8])
+        
+                                ## debug messages    
+                                if debug:
+                                    HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
+                                    HCGB_aes.debug_message("line: " + line, "red")
+                                    HCGB_aes.debug_message("lineCount2: " + str(lineCount2), "red")
+                                    HCGB_aes.debug_message("line2: " + line2, "red")
+                                    HCGB_aes.debug_message("geneid: " + geneid[0], "yellow")
+                                    HCGB_aes.debug_message("geneid2: " + geneid2[0], "yellow")
+                                
+                                ##
+                                if (geneid[0] == geneid2[0]):
+                                    fileWriter.write(line2 + '\n')
+                                else:
+                                    stop=True
+                                    break
+        
+                                ## init
+                                lineCount = 0
+                                fileWriter.close()
                             
-                            ##
-                            if (geneid[0] == geneid2[0]):
-                                fileWriter.write(line2)
+                            if not stop:
+                                #read a line
+                                line = fileReader.readline()
+                                if line == '':#empty is EOF
+                                    fileWriter.close()
                             else:
-                                stop=True
-                                break
-    
+                                line=line2
+                                stop=False
+                            
+                        ## In BED format there is no problem of breaking exons, etc
+                        elif in_format=="BED":
                             ## init
                             lineCount = 0
                             fileWriter.close()
-                        
-                        if not stop:
-                            #read a line
-                            line = fileReader.readline()
-                            if line == '':#empty is EOF
-                                fileWriter.close()
-                        else:
-                            line=line2
-                            stop=False
-                        
-                    ## In BED format there is no problem of breaking exons, etc
-                    elif in_format=="BED":
-                        ## init
-                        lineCount = 0
-                        fileWriter.close()
-                
+                    
+                    else:
+                        line = fileReader.readline()
+                        if line == '':#empty is EOF
+                            fileWriter.close()
                 else:
-                    line = fileReader.readline()
-                    if line == '':#empty is EOF
-                        fileWriter.close()
+                    break
                 
             ## Close GTF File        
             fileWriter.close()
@@ -376,7 +428,8 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
         HCGB_aes.debug_message("dict_files_generated: " + str(dict_files_generated), "yellow")
         print()
         HCGB_aes.debug_message("*************************** split_GTF ***************************", "yellow")
-        
+    
+    print("\t\t Process finished here.")
     
     return(dict_files_generated)
 
@@ -392,7 +445,7 @@ def main():
     
     parser.add_argument('--input', '-i', help='Input file', required=True);
     
-    parser.add_argument('--input_format', dest='in_format', nargs='*', help='Input format file', choices=['BED', 'GTF'], required=True);
+    parser.add_argument('--input_format', '-f', dest='in_format', nargs='*', help='Input format file', choices=['BED', 'GTF'], required=True);
     
     parser.add_argument('--num_files','-n', type=int,
                         help='Split file into as many subfiles.', default=2);
@@ -401,7 +454,8 @@ def main():
                         help='Name to add for each file generated. Default: use filename provided.', default="");
 
     parser.add_argument('--path',
-                        help='Path to save for each file generated. Default: use path from filename provided.', default="");
+                        help='Path to save for each file generated. Default: use path from filename provided.', 
+                        default="");
 
     parser.add_argument('--split_chromosome','-c',action="store_true",
                         help='Split file for each chromosome or reference sequence available.');
@@ -410,8 +464,11 @@ def main():
     
     ## lets split the big file provided
     files_generated = split_file_call(os.path.abspath(args.input), num_files=args.num_files, name=args.name, 
-                  chr_option=args.split_chromosome, in_format=str(args.in_format[0]), path_given=os.path.abspath(args.path), debug=False)
-        
+                  chr_option=args.split_chromosome, in_format=str(args.in_format[0]), 
+                  path_given=os.path.abspath(args.path), 
+                  debug=False)
+    
+    print("+ Check dictionary with files generated:")    
     print(files_generated)
     
 

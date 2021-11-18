@@ -24,7 +24,6 @@ BED Format details: https://genome.ucsc.edu/FAQ/FAQformat.html#format1
 import sys
 import os
 import re
-import pandas as pd
 from termcolor import colored
 
 import HCGB.functions.aesthetics_functions as HCGB_aes
