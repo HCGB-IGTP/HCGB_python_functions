@@ -343,12 +343,6 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
                         #increment file count, use it for new file name
                         fileCount += 1
     
-                    #write a line
-                    fileWriter.write(line + '\n')
-                    
-                    ## sum to lines
-                    lineCount += 1
-    
                     ## Debug messages
                     if debug:
                         HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
@@ -403,8 +397,13 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
                             ## init
                             lineCount = 0
                             fileWriter.close()
-                    
                     else:
+                        ## sum to lines
+                        lineCount += 1
+    
+                        #write a line
+                        fileWriter.write(line + '\n')
+
                         line = fileReader.readline()
                         if line == '':#empty is EOF
                             fileWriter.close()
