@@ -2,7 +2,7 @@ __all__ = [
     'sampleParser',
     'functions',
     'config',
-    'scripts'
+    'format_conversion'
 ]
 
 from HCGB import *

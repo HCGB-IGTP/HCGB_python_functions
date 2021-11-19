@@ -240,11 +240,6 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
                     ## create new file
                     if lineCount == 0:
                         #create a file in append mode
-                        print("********")
-                        print(line)
-                        print(chrid)
-                        print("********")
-                        
                         ## open file
                         fileWriter = open(dict_files_generated["Chr_" + str(chrid)],"a") ## append as it might be some repetitive elements at the end                
         

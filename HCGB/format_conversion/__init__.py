@@ -3,5 +3,5 @@ __all__ = [
     'gtf2bed'
 ]
 
-from HCGB.scripts import *
+from HCGB.format_conversion import *
 
