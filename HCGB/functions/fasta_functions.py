@@ -30,6 +30,29 @@ from HCGB.functions import system_call_functions
 ###         FASTA files        ##
 #################################
 
+##########################################################
+def get_fasta_dict(fasta_file, Debug):
+    """
+    
+    """
+    fasta_count = defaultdict(int)
+    with open(fasta_file, 'r') as fh:
+        lines = []
+        for line in fh:
+            lines.append(line.rstrip())
+            if len(lines) == 2:
+                record = process_fasta(lines)
+                #sys.stderr.write("Record: %s\n" % (str(record)))
+                lines = []
+                fasta_count[record['sequence']] = record['name'].split(">")[1]
+                
+    return fasta_count        
+
+###############
+def ReverseComplement(seq):
+    seq_dict = {'A':'T','T':'A','G':'C','C':'G','N':'N'}
+    return "".join([seq_dict[base] for base in reversed(seq)])
+
 ###############
 def concat_fasta(dirFasta, Fasta):
     print ("+ Concatenating all information into one file...")    

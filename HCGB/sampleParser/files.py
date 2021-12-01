@@ -184,7 +184,7 @@ def get_fields(file_name_list, pair, Debug, include_all):
 ###############
 
 ################################
-def get_files(options, input_dir, mode, extension, debug):
+def get_files(options, input_dir, mode, extension, debug, bam=False):
     """
     Parser function to get files
     
@@ -338,7 +338,6 @@ def get_files(options, input_dir, mode, extension, debug):
     samples_names = set(samples_names)
 
     ## discard some files obtain
-    files = [s for s in files if '.bam' not in s]
     files = [s for s in files if '.sam' not in s]
     files = [s for s in files if '.log' not in s]
     files = [s for s in files if '.annot' not in s]
@@ -349,6 +348,11 @@ def get_files(options, input_dir, mode, extension, debug):
     files = [s for s in files if 'failed.fq.gz' not in s]
     files = [s for s in files if 'unjoin' not in s]
     files = [s for s in files if '00.0_0.cor.' not in s]
+    
+    ## exceptions of the exceptions
+    if not bam:
+        files = [s for s in files if '.bam' not in s]
+    
     
     ## skip using trim if fastq mode provided
     if (mode == 'fastq'):

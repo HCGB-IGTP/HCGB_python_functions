@@ -67,6 +67,8 @@ def retrieve_matching_files(folder, string, debug=False, starts=False):
         matching = [s for s in my_all_list if s.startswith(string)]
     else:
         matching = [s for s in my_all_list if s.endswith(string)]
+        
+        
     return (matching)
 
 ##########
@@ -101,8 +103,6 @@ def get_fullpath_list(dir_given, debug=False):
     for root, dirs, files in os.walk(dir_given):
         for f in files:
             return_path.append(os.path.join(root,f))
-            if debug:
-                print(dirs)
 
     ## returns list of files
     return return_path
@@ -192,6 +192,9 @@ def urllib_request(folder, url_string, file_name, debug):
         print ("Zip: ", zipped)
         print ("file_name_unzipped: ", file_name_unzipped)
         
+    ##
+    url_string = url_string + file_name
+        
     
     ## timestamp
     filename_stamp = folder + '/.success'
@@ -209,27 +212,27 @@ def urllib_request(folder, url_string, file_name, debug):
             stamp = functions.time_functions.read_time_stamp(filename_stamp)
             print ("\tFile (%s) Previously downloaded in: %s" %(file_name, stamp))
             return(file_path_name_unzipped)
-    else:
-        ## debug message
-        if debug:
-            print ("## Debug: Download file: ", file_name, ":: ", url_string)
-        
-        # downloads
-        urllib.request.urlretrieve(url_string, file_path_name )
-        
-        ## check if correctly download
-        if os.path.exists(file_path_name):
-            functions.time_functions.print_time_stamp(filename_stamp)
-        else:
-            sys.exit('Could not download file %s (%s)' %(file_name, url_string))
 
-        ## extract if zipped
-        if (zipped):
-            functions.files_functions.extract(file_path_name, out=folder)
-            return (file_path_name_unzipped)
-            
-        else:
-            return(file_path_name)
+    ## debug message
+    if debug:
+        print ("## Debug: Download file: ", file_name, ":: ", url_string)
+    
+    # downloads
+    urllib.request.urlretrieve(url_string, file_path_name )
+    
+    ## check if correctly download
+    if os.path.exists(file_path_name):
+        functions.time_functions.print_time_stamp(filename_stamp)
+    else:
+        sys.exit('Could not download file %s (%s)' %(file_name, url_string))
+
+    ## extract if zipped
+    if (zipped):
+        functions.files_functions.extract(file_path_name, out=folder)
+        return (file_path_name_unzipped)
+        
+    else:
+        return(file_path_name)
 
 ###################
 def create_excel_file(file_name, dict_data, SEP=",", options="index_col=0", debug=False):

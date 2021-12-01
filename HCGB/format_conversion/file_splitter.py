@@ -13,7 +13,7 @@ It is also possible to split according to chromosome (one gtf/chromosome)
 
 import os
 import re
-import argparse;
+import argparse
 import traceback
 from termcolor import colored
 
@@ -311,7 +311,7 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
             HCGB_aes.debug_message("totalLines_file: " + str(totalLines_file), "yellow")
             HCGB_aes.debug_message("fileLineCount: " + str(fileLineCount), "yellow")
             HCGB_aes.debug_message("num_files: " + str(num_files), "yellow")
-            
+                
         try:
             #read a file
             ## skip comments at the beginning of files
@@ -339,9 +339,9 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
                         fileCount += 1
     
                     ## Debug messages
-                    if debug:
-                        HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
-                        HCGB_aes.debug_message("line: " + line, "red")
+                    #if debug:
+                    #    HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
+                    #    HCGB_aes.debug_message("line: " + line, "red")
                     
                     ## stop when max_lines_file achieved
                     if lineCount == fileLineCount:
@@ -359,13 +359,13 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
                                 geneid2=re.findall(r'gene_id \"([\w\.]+)\"',field2[8])
         
                                 ## debug messages    
-                                if debug:
-                                    HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
-                                    HCGB_aes.debug_message("line: " + line, "red")
-                                    HCGB_aes.debug_message("lineCount2: " + str(lineCount2), "red")
-                                    HCGB_aes.debug_message("line2: " + line2, "red")
-                                    HCGB_aes.debug_message("geneid: " + geneid[0], "yellow")
-                                    HCGB_aes.debug_message("geneid2: " + geneid2[0], "yellow")
+                                #if debug:
+                                #    HCGB_aes.debug_message("lineCount: " + str(lineCount), "red")
+                                #    HCGB_aes.debug_message("line: " + line, "red")
+                                #    HCGB_aes.debug_message("lineCount2: " + str(lineCount2), "red")
+                                #    HCGB_aes.debug_message("line2: " + line2, "red")
+                                #    HCGB_aes.debug_message("geneid: " + geneid[0], "yellow")
+                                #    HCGB_aes.debug_message("geneid2: " + geneid2[0], "yellow")
                                 
                                 ##
                                 if (geneid[0] == geneid2[0]):
@@ -388,7 +388,7 @@ def split_file(given_file, num_files, name, chr_option, in_format, path_given=Fa
                                 stop=False
                             
                         ## In BED format there is no problem of breaking exons, etc
-                        elif in_format=="BED":
+                        elif in_format=="BED" or in_format=="SAM":
                             ## init
                             lineCount = 0
                             fileWriter.close()

@@ -3,7 +3,8 @@
 ## Jose F. Sanchez                                        ##
 ## Copyright (C) 2019-2020 Lauro Sumoy Lab, IGTP, Spain   ##
 ############################################################
-from curses.ascii import NUL
+
+
 """
 Shared functions used along ``BacterialTyper`` & ``XICRA`` pipeline.
 With different purposes:
