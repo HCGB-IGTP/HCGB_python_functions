@@ -15,6 +15,7 @@ from termcolor import colored
 from HCGB import sampleParser
 from HCGB import functions
 
+###########################################################################
 def select_samples (list_samples, samples_prefix, pair=True, exclude=False, Debug=False, lane=False, include_all=False):
     """
     Select samples
@@ -142,7 +143,7 @@ def select_samples (list_samples, samples_prefix, pair=True, exclude=False, Debu
     ## return info
     return (name_frame_samples)
 
-###############
+###########################################################################
 def select_other_samples (project, list_samples, samples_prefix, mode, extensions, exclude=False, Debug=False):
 
     ## init dataframe
@@ -162,7 +163,7 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
 
     #Get all files in the folder "path_to_samples"    
     for names in samples_prefix:
-        for path_file in list_samples:    
+        for path_file in list_samples:
             f = os.path.basename(path_file)
             dirN = os.path.dirname(path_file)
             #samplename_search = re.search(r"(%s).*" % names, f)
@@ -217,6 +218,16 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
                                 sample_name = f_search.group(1)
                                 soft_name = f_search.group(2).split("_")[0] ## miraligner_miRTop
                                 df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
+                    
+                    elif mode== 'piRNA':
+                        #### sample_name/piRNA/soft_name/*_clusters.bed
+                        for ext in extensions:
+                            f_search = re.search(r".*\/data\/(.*)\/%s\/(.*)\/.*%s$" %(mode, ext), path_file)
+                            
+                            if f_search:
+                                sample_name = f_search.group(1)
+                                soft_name = f_search.group(2).split("_")[0] ## pilfer/other
+                                df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
 
                     else:
                         for ext in extensions:
@@ -252,7 +263,9 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
                     for ext in extensions:
                         if f.endswith(ext):
                             file_name, ext1 = os.path.splitext(f)
-                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext1, mode]    
+                            ##columns = ("sample", "dirname", "name", "ext", "tag")
+                            file_name= os.path.basename(dirN)
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
 
     ## debug message
     if (Debug):

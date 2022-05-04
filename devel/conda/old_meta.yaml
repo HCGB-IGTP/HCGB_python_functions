@@ -1,0 +1,49 @@
+{% set version = "0.3.6" %}
+
+package:
+  name: "hcgb"
+  version: "{{ version }}"
+
+source:
+  path: ../../
+ 
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - biopython
+    - pandas
+    - pip
+    - python
+    - termcolor
+    - wget
+    - xlsxwriter
+  run:
+    - biopython
+    - pandas
+    - python
+    - termcolor
+    - wget
+    - xlsxwriter
+
+test:
+  imports:
+    - HCGB
+    - HCGB.config
+    - HCGB.functions
+    - HCGB.sampleParser
+
+about:
+  home: "https://github.com/HCGB-IGTP/HCGB_python_functions/"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Useful python functions"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - your-github-id-here

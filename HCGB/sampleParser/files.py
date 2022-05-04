@@ -353,7 +353,6 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     if not bam:
         files = [s for s in files if '.bam' not in s]
     
-    
     ## skip using trim if fastq mode provided
     if (mode == 'fastq'):
         files = [s for s in files if 'trim' not in s]
