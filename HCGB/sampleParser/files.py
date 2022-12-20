@@ -104,9 +104,15 @@ def get_fields(file_name_list, pair, Debug, include_all):
                     else:
                         name_search = re.search(r"(.*)\_(R1|1|R2|2)\.(f.*q)(\..*){0,1}", file_name)
                         
-                        read_pair = name_search.group(2)
-                        ext = name_search.group(3)
-                        gz = name_search.group(4)
+                        if (name_search):
+                            read_pair = name_search.group(2)
+                            ext = name_search.group(3)
+                            gz = name_search.group(4)
+                        else:
+                            name_search = re.search(r"(.*)\.(read1|read2)\.(f.*q)(\..*){0,1}", file_name)
+                            read_pair = name_search.group(2)
+                            ext = name_search.group(3)
+                            gz = name_search.group(4)
             else:
                 if (trim_search):
                     if (lane_search):
@@ -348,6 +354,7 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     files = [s for s in files if 'failed.fq.gz' not in s]
     files = [s for s in files if 'unjoin' not in s]
     files = [s for s in files if '00.0_0.cor.' not in s]
+    files = [s for s in files if '_orphan' not in s]
     
     ## exceptions of the exceptions
     if not bam:
@@ -360,6 +367,13 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     ## skip using join if trimm mode provided    
     if (mode == 'trim'):
         files = [s for s in files if 'joined' not in s]
+        files = [s for s in files if 'raw' not in s]
+    
+    if (mode == 'join'):
+        files = [s for s in files if 'raw' not in s]
+        files = [s for s in files if 'trim_R' not in s]
+    
+    
     
     ##
     files = list(filter(None, files)) ## empty space

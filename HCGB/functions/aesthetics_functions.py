@@ -39,8 +39,11 @@ def pipeline_header(option, ver=""):
     elif (option == 'BacterialTyper'):
         print('#', '{: ^66}'.format("BacterialTyper pipeline"), '#')
         print('#', '{: ^66}'.format("Jose F. Sanchez, Cristina Prat & Lauro Sumoy"), '#')
+    elif (option == 'RSP'):
+        print('#', '{: ^66}'.format("RNAseq pipeline - RSP"), '#')
+        print('#', '{: ^66}'.format("Jose F. Sanchez, Mireia Marin & Lauro Sumoy"), '#')
     
-    print('#', '{: ^66}'.format("Copyright (C) 2019-2021 Lauro Sumoy Lab, IGTP, Spain"), '#')
+    print('#', '{: ^66}'.format("Copyright (C) 2019-2022 Lauro Sumoy Lab, IGTP, Spain"), '#')
     
     ## add version
     if ver:

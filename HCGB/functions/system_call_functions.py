@@ -20,7 +20,7 @@ With different purposes:
 """
 ## useful imports
 import subprocess
-import wget
+import wget ## FIXME: not conda supported
 from termcolor import colored
 ##from filehash import FileHash ## FIXME: not conda supported
 import os
