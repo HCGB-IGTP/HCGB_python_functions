@@ -355,7 +355,7 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     files = [s for s in files if 'unjoin' not in s]
     files = [s for s in files if '00.0_0.cor.' not in s]
     files = [s for s in files if '_orphan' not in s]
-    
+
     ## exceptions of the exceptions
     if not bam:
         files = [s for s in files if '.bam' not in s]
@@ -368,12 +368,13 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     if (mode == 'trim'):
         files = [s for s in files if 'joined' not in s]
         files = [s for s in files if 'raw' not in s]
+        
     
     if (mode == 'join'):
         files = [s for s in files if 'raw' not in s]
         files = [s for s in files if 'trim_R' not in s]
     
-    
+    print("Hi!")
     
     ##
     files = list(filter(None, files)) ## empty space

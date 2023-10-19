@@ -20,7 +20,7 @@ With different purposes:
 """
 ## useful imports
 import subprocess
-import wget ## FIXME: not conda supported
+#import wget ## FIXME: not conda supported
 from termcolor import colored
 ##from filehash import FileHash ## FIXME: not conda supported
 import os
@@ -68,7 +68,8 @@ def wget_download(url, path):
     """
     
     print ('\t+ Downloading: ', url)
-    wget.download(url, path)
+    # FIXME: Add an alternative package to download URLs
+    #wget.download(url, path)
     print ('\n')
 
 ###############

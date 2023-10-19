@@ -1,6 +1,8 @@
 ## compiler
 *__pycache__/
 *pyc
+.spyproject/
+*swp
 
 ## eclipse
 .project
@@ -15,3 +17,6 @@ dist
 build
 .pypirc
 
+## conda
+devel/conda/logs/
+devel/conda/hcgb

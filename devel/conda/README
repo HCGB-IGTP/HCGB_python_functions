@@ -1,0 +1,18 @@
+## May 2022
+
+## fix error https://github.com/conda/conda-build/issues/4354
+## using python-version 3.6
+
+## create skeleton from pip package
+conda skeleton pypi hcgb --python-version 3.6
+
+It was necessary to modify meta.yaml. Automatic url was not working as the name hcgb was in lowercase but required to be uppercase.
+
+## create conda build
+conda-build hcgb/
+
+
+## 19 October 2023
+# I removed pip packages with no conda recipe and it worked!
+conda skeleton pypi hcgb
+conda-build hcgb/
