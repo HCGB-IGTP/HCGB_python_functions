@@ -16,3 +16,53 @@ conda-build hcgb/
 # I removed pip packages with no conda recipe and it worked!
 conda skeleton pypi hcgb
 conda-build hcgb/
+
+
+# To upload recipe, follow the guidelines in: https://bioconda.github.io/contributor/setup.html
+
+## create a fork
+
+## create a local clone
+git clone https://github.com/<USERNAME>/bioconda-recipes.git
+
+## Set things proprely:
+
+## To be able to update this folder more easily with changes made to our 
+## repository, add the main bioconda-recipes repo as an upstream remote 
+
+cd bioconda-recipes
+git remote add upstream git@github.com:bioconda/bioconda-recipes.git
+
+# Make sure our master is up to date with Bioconda
+git checkout master
+git pull upstream master
+git push origin master
+
+# Create and checkout a new branch for our work
+git checkout -b update_my_recipe
+
+
+## create an skeleton, modify meta.yaml and execute conda-build
+cd recipes
+conda skeleton pypi hcgb
+conda-build hcgb/
+
+
+## Push changes
+# Choose the edited files to commit:
+git add pyaml
+# Create a commit (will open editor)
+git commit
+# Push your commit to GitHub
+git push
+
+
+## After creating a local clone of bioconda-recipes, once you have create the skeleton and build, you can test locally.
+
+conda install -c conda-forge -c bioconda bioconda-utils
+bioconda-utils build --git-range master
+
+## bioconda-utils will test the recipes build in your local clone vs. master
+
+
+## Create a pull request
