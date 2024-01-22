@@ -7,6 +7,9 @@
 import json
 import os
 from HCGB import functions
+import hashlib
+from hmac import compare_digest
+
 
 ######################################
 def dump_info_run(out_folder, module, userinput, runInfo, debug):
@@ -77,7 +80,109 @@ def dump_info_run(out_folder, module, userinput, runInfo, debug):
 ######################################
 def compare_info_dict(dict1, dict2, listItems, debug):
     """Given a pair of dictionaries and a list of items, compare values."""
+    ##
     print()
+
+######################################
+def dump_info_conda(folder, module, debug):
+    """
+    Prints information of the conda environment in yml format
     
+    :param folder: Absolute path to folder to dump conda environment file 
+    :param module: Module or script name executed
     
+    :type folder: string 
+    :type module: string 
     
+    :returns: Prints information in yml format in the output folder provided.
+    
+    Example of information to include:
+    
+    name: Bacterialtyper_dev
+    channels:
+      - bioconda
+      - conda-forge
+      - defaults
+    dependencies:
+      - _libgcc_mutex=0.1=conda_forge
+      - _openmp_mutex=4.5=2_gnu
+      - _sysroot_linux-64_curr_repodata_hack=3=h69a702a_13
+      - alsa-lib=1.2.10=hd590300_0
+      - any2fasta=0.4.2=hdfd78af_3
+      - aragorn=1.2.41=h031d066_1
+      - argtable2=2.13=h14c3975_1001
+      - asttokens=2.4.0=pyhd8ed1ab_0
+      - backcall=0.2.0=pyh9f0ad1d_0
+      - backports=1.0=pyhd8ed1ab_3
+      - backports.functools_lru_cache=1.6.5=pyhd8ed1ab_0
+      - barrnap=0.9=hdfd78af_4
+      - bcftools=1.18=h8b25389_0
+      ...
+
+    """
+    
+    ## Check if file exist and contains information
+    file_yml = os.path.join(folder, 'BacterialTyper.yml')
+    
+    ## if file exists and contains information
+    if functions.files_functions.is_non_zero_file(file_yml):
+        ## check filehash 
+        file_hash = read_filehash(file_yml)
+        
+        ## Create a new one
+        conda_export_call_tmp = 'conda env export -f ' + file_yml + '_tmp'
+        functions.system_call_functions.system_call(conda_export_call_tmp,  True, message=False)
+        
+        file_hash2 = read_filehash(file_yml + '_tmp')
+        ## remove tmp_file generated
+        os.remove(file_yml + '_tmp')
+        
+        ## if different, create a new file containing module name provided
+        if file_hash.hexdigest() == file_hash2.hexdigest():
+            return()
+        else:
+            data_string = functions.time_functions.create_human_timestamp()
+            new_tag = data_string + '_' + module
+            file_yml = os.path.join(folder, new_tag + '_BacterialTyper.yml')
+    
+    ## create a system call to create:
+    conda_export_call = 'conda env export -f ' + file_yml
+    functions.system_call_functions.system_call(conda_export_call,  True, message=True)
+
+
+
+######################################
+def read_filehash(file_given):
+    """
+    Obtains file hash for the given file using python hashlib
+    
+    :param file_given: Absolute path to file to check
+    :type file_given: string 
+    
+    :returns: file_hash generated (hashlib.sha256())
+    
+    Example of information generated:
+    
+    Parameters
+    ----------
+    file_given : /path/fo/file/file1.py
+
+    Returns
+    -------
+    f1adc236059bf58ea6cf2f6838cafb1daaf0353c3e1d4fcac5cff1ff6a20d2ab
+
+    """
+
+    ## original code from: https://nitratine.net/blog/post/how-to-hash-files-in-python/
+    BLOCK_SIZE = 65536 # The size of each read from the file
+
+    file_hash = hashlib.sha256() # Create the hash object, can use something other than `.sha256()` if you wish
+    with open(file_given, 'rb') as f: # Open the file to read it's bytes
+        fb = f.read(BLOCK_SIZE) # Read from the file. Take in the amount declared above
+        while len(fb) > 0: # While there is still data being read from the file
+            file_hash.update(fb) # Update the hash
+            fb = f.read(BLOCK_SIZE) # Read the next block from the file
+    
+    return(file_hash)
+
+

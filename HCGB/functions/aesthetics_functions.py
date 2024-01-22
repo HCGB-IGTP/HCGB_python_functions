@@ -21,6 +21,7 @@ With different purposes:
 ## useful imports
 import sys
 from termcolor import colored
+import HCGB.functions.time_functions as HCGB_time
 
 ############################################################################
 ########                     AESTHETICS                             ########
@@ -79,6 +80,25 @@ def progbar(curr, total, full_progbar):
     sys.stdout.flush()
     
 ###############
-def debug_message(message, color='red'):
+def green_message(message, color='light_green'):
+    print (colored(message, color))   
+
+def debug_message(message, color='yellow'):
     print (colored("*** DEBUG: %s" %(message), color))   
 
+###############
+def error_message(message, color='light_red'):
+    print (colored("*** ERROR: %s" %(message), color))   
+
+def warning_message(message, color='cyan'):
+    print (colored("*** WARNING: %s" %(message), color))   
+
+def raise_and_exit(message):
+    error_message(message, color='light_red')
+    error_message("Exit BacterialTyper", color='light_red')
+    raise SystemExit()
+    
+def print_argparse_dict(dict_options):
+    debug_message("Options provided: ")
+    print("\t-")
+    print('\n\t- '.join(f'{k}={v}' for k, v in vars(dict_options).items()))

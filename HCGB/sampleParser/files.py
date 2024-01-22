@@ -42,6 +42,11 @@ def get_fields(file_name_list, pair, Debug, include_all):
     
     ## loop through list
     for path_files in file_name_list:
+        if (Debug):
+            debug_message("Search for sample names: ")
+            debug_message("File: " + path_files)
+        
+        
         ## get file name
         file_name = os.path.basename(path_files)
         dirN = os.path.dirname(path_files)
@@ -139,8 +144,6 @@ def get_fields(file_name_list, pair, Debug, include_all):
             name_len = len(name)
             
             if (Debug):
-                debug_message("Search for sample names: ")
-                debug_message("File: " + path_files)
                 debug_message("Name: " + name_search.group(1))
                 debug_message("Lane: " + lane_id)
                 debug_message("Pair: " + read_pair)
@@ -190,7 +193,7 @@ def get_fields(file_name_list, pair, Debug, include_all):
 ###############
 
 ################################
-def get_files(options, input_dir, mode, extension, debug, bam=False):
+def get_files(options, input_dir, mode, extension, debug, bam=False, append_discard_list = []):
     """
     Parser function to get files
     
@@ -221,6 +224,38 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
         + options.ex_sample file or string    
     
     """
+    
+    ## discard some files obtain
+    discard_list = [
+        '.sam', 
+        '.log',
+        '.annot',
+        '.abundances.txt',
+        '.gff3',
+        'trimmed.fq',
+        'fastqc_',
+        'assemble_qc',
+        'annot_qc',
+        'trim.clpsd.fq',
+        'failed.fq.gz',
+        'unjoin',
+        '00.0_0.cor.',
+        '_orphan',
+        'agr_typing',
+        'single_copy_busco_sequences',
+        'fragmented_busco_sequences',
+        'sccmec_typing',
+        'final_contigs',
+        'profile_summary',
+        'prodigal']
+    
+    ## extend list with new entries
+    discard_list.extend(append_discard_list)
+    
+    if debug:
+        print("** DEBUG: discard_list")
+        print(discard_list)
+    
     ## get list of input files
     files = []
     if (options.project):
@@ -300,7 +335,7 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
 
     if options.debug:
         print (colored("** DEBUG: sampleParser.get_files files", 'yellow'))
-        print (files)
+        #print (files)
 
     ## get list of samples
     samples_names = []
@@ -343,18 +378,8 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     samples_names = list(filter(None, samples_names)) ## empty space
     samples_names = set(samples_names)
 
-    ## discard some files obtain
-    files = [s for s in files if '.sam' not in s]
-    files = [s for s in files if '.log' not in s]
-    files = [s for s in files if '.annot' not in s]
-    files = [s for s in files if '.abundances.txt' not in s]
-    files = [s for s in files if '.gff3' not in s]
-    files = [s for s in files if 'trimmed.fq' not in s]
-    files = [s for s in files if 'trim.clpsd.fq' not in s]
-    files = [s for s in files if 'failed.fq.gz' not in s]
-    files = [s for s in files if 'unjoin' not in s]
-    files = [s for s in files if '00.0_0.cor.' not in s]
-    files = [s for s in files if '_orphan' not in s]
+    for dlist in discard_list:
+        files = [s for s in files if dlist not in s]
 
     ## exceptions of the exceptions
     if not bam:
@@ -374,8 +399,6 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
         files = [s for s in files if 'raw' not in s]
         files = [s for s in files if 'trim_R' not in s]
     
-    print("Hi!")
-    
     ##
     files = list(filter(None, files)) ## empty space
     files = set(files) ## unique results
@@ -385,13 +408,15 @@ def get_files(options, input_dir, mode, extension, debug, bam=False):
     if (options.debug):
         print (colored("\n**DEBUG: sampleParser.get_files files list to check **", 'yellow'))
         print ('DO NOT PRINT THIS LIST: It could be very large...')
-        print (files, '\n')
+        #print (files, '\n')
 
     ## get information
     if mode in ['fastq', 'trim', 'join']:
         pd_samples_retrieved = sampleParser.samples.select_samples(files, samples_names, options.pair, exclude, options.debug, options.include_lane, options.include_all)
     else:
-        pd_samples_retrieved = sampleParser.samples.select_other_samples(options.project, files, samples_names, mode, extension, exclude, options.debug)        
+        pd_samples_retrieved = sampleParser.samples.select_other_samples(project = options.project, list_samples=files,    
+                                                                         samples_prefix = samples_names, mode = mode, 
+                                                                         extensions = extension, exclude=exclude, Debug=options.debug)        
     
     ## remove duplicates & return
     pd_samples_retrieved = pd_samples_retrieved.drop_duplicates()

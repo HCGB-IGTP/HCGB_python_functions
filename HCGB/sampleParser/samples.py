@@ -151,7 +151,7 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
 
     ## initiate dataframe
     df_samples = pd.DataFrame(columns=name_columns)
-
+    
     ## debug message
     if (Debug):
         print (colored("**DEBUG: samples_prefix **", 'yellow'))
@@ -166,112 +166,108 @@ def select_other_samples (project, list_samples, samples_prefix, mode, extension
         for path_file in list_samples:
             f = os.path.basename(path_file)
             dirN = os.path.dirname(path_file)
+            sample_name = os.path.basename( os.path.dirname(dirN ) )
+            
             #samplename_search = re.search(r"(%s).*" % names, f)
             samplename_search = re.search(r"(%s).*" % names, path_file)
             
-            enter = ""
             if samplename_search:
                 if (exclude): ## exclude==True
-                    enter = False
-                else: ## exclude==True
-                    enter = True
+                    continue  ## go to next item        
             else:
                 if (exclude): ## exclude==True
-                    enter = True
+                    pass
                 else: ## exclude==True
-                    enter = False
+                    continue
                     
-            if enter:
+            ## detached mode
+            if not project:
+                print("Not project mode")
+                for ext in extensions:
+                    if f.endswith(ext):
+                        file_name, ext1 = os.path.splitext(f)
+                        ##columns = ("sample", "dirname", "name", "ext", "tag")
+                        file_name= os.path.basename(dirN)
+                        df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+
+            ## project mode:
+            else:
+                if mode == 'annot':
+                    #### /path/to/folder/annot/name.faa
+                    for ext in extensions:
+                        f_search = re.search(r".*\/%s\/(.*)\.%s$" %(mode, ext), path_file)
+                        if f_search:
+                            file_name = f_search.group(1) 
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, ext, mode]    
+
+                elif mode== 'assembly':
+                    #### name_assembly.faa
+                    for ext in extensions:
+                        f_search = re.search(r"(.*)\_%s\.%s$" %(mode, ext), f)
+                        if f_search:
+                            file_name = f_search.group(1) 
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, ext, mode]    
+
+                elif mode== 'mash':
+                    #### name.sig
+                    for ext in extensions:
+                        f_search = re.search(r".*\/%s\/(.*)\.%s$" %(mode, ext), path_file)
+                        if f_search:
+                            file_name = f_search.group(1) 
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, ext, mode]    
+
+                elif mode== 'miRNA':
+                    #### counts/mirtop.tsv
+                    for ext in extensions:
+                        f_search = re.search(r".*\/data\/(.*)\/%s\/(.*)\/counts\/%s$" %(mode, ext), path_file)
+
+                        if f_search:
+                            sample_name = f_search.group(1)
+                            soft_name = f_search.group(2).split("_")[0] ## miraligner_miRTop
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
                 
-                ## project mode:
-                if project:
-                    if mode == 'annot':
-                        #### /path/to/folder/annot/name.faa
-                        for ext in extensions:
-                            f_search = re.search(r".*\/%s\/(.*)\.%s$" %(mode, ext), path_file)
-                            if f_search:
-                                file_name = f_search.group(1) 
-                                df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+                elif mode== 'piRNA':
+                    #### sample_name/piRNA/soft_name/*_clusters.bed
+                    for ext in extensions:
+                        f_search = re.search(r".*\/data\/(.*)\/%s\/(.*)\/.*%s$" %(mode, ext), path_file)
+                        
+                        if f_search:
+                            sample_name = f_search.group(1)
+                            soft_name = f_search.group(2).split("_")[0] ## pilfer/other
+                            df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
 
-                    elif mode== 'assembly':
-                        #### name_assembly.faa
-                        for ext in extensions:
-                            f_search = re.search(r"(.*)\_%s\.%s$" %(mode, ext), f)
-                            if f_search:
-                                file_name = f_search.group(1) 
-                                df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
-
-                    elif mode== 'mash':
-                        #### name.sig
-                        for ext in extensions:
-                            f_search = re.search(r".*\/%s\/(.*)\.%s$" %(mode, ext), path_file)
-                            if f_search:
-                                file_name = f_search.group(1) 
-                                df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
-
-                    elif mode== 'miRNA':
-                        #### counts/mirtop.tsv
-                        for ext in extensions:
-                            f_search = re.search(r".*\/data\/(.*)\/%s\/(.*)\/counts\/%s$" %(mode, ext), path_file)
-
-                            if f_search:
-                                sample_name = f_search.group(1)
-                                soft_name = f_search.group(2).split("_")[0] ## miraligner_miRTop
-                                df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
-                    
-                    elif mode== 'piRNA':
-                        #### sample_name/piRNA/soft_name/*_clusters.bed
-                        for ext in extensions:
-                            f_search = re.search(r".*\/data\/(.*)\/%s\/(.*)\/.*%s$" %(mode, ext), path_file)
-                            
-                            if f_search:
-                                sample_name = f_search.group(1)
-                                soft_name = f_search.group(2).split("_")[0] ## pilfer/other
-                                df_samples.loc[len(df_samples)] = [path_file, dirN, sample_name, soft_name, mode]    
-
-                    else:
-                        for ext in extensions:
-                            f_search = re.search(r".*\/(.*)\/%s\/(.*)\_summary\.%s$" %(mode, ext), path_file)
-                            if f_search:
-                                ### get information
-                                if mode == 'profile':
-                                    name = f_search.group(1)
-                                    db_name = f_search.group(2).split('_')[-1]
-                                    if not name.startswith('report'):
-                                        df_samples.loc[len(df_samples)] = [path_file, dirN, name, db_name, mode]    
-    
-                                elif mode == 'ident':
-                                    name = f_search.group(1)
-                                    df_samples.loc[len(df_samples)] = [path_file, dirN, name, 'csv', mode]
-                                    
-                            else:
-                                #### common: path/sample_name/job/info.csv
-                                for ext in extensions:
-                                    f_search = re.search(r"(.*)\/%s\/(.*)\.%s$" %(mode, ext), path_file)
-                                    if f_search:
-                                        file_name = os.path.basename(f_search.group(1))
-                                        df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]
-                                    else:
-                                        f_search2 = re.search(r"(.*)\/%s\/%s$" %(mode, ext), path_file)
-                                        if f_search2:
-                                            file_name = os.path.basename(f_search2.group(1))
-                                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
-                                            
-                                    
-                ## detached mode
                 else:
                     for ext in extensions:
-                        if f.endswith(ext):
-                            file_name, ext1 = os.path.splitext(f)
-                            ##columns = ("sample", "dirname", "name", "ext", "tag")
-                            file_name= os.path.basename(dirN)
-                            df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+                        f_search = re.search(r".*\/(.*)\/%s\/(.*)\_summary\.%s$" %(mode, ext), path_file)
+                        if f_search:
+                            ### get information
+                            if mode == 'profile':
+                                name = f_search.group(1)
+                                db_name = f_search.group(2).split('_')[-1]
+                                if not name.startswith('report'):
+                                    df_samples.loc[len(df_samples)] = [path_file, dirN, name, db_name, mode]    
 
+                            elif mode == 'ident':
+                                name = f_search.group(1)
+                                df_samples.loc[len(df_samples)] = [path_file, dirN, name, 'csv', mode]
+                                
+                        else:
+                            #### common: path/sample_name/job/info.csv
+                            for ext in extensions:
+                                f_search = re.search(r"(.*)\/%s\/(.*)\.%s$" %(mode, ext), path_file)
+                                if f_search:
+                                    file_name = os.path.basename(f_search.group(1))
+                                    df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]
+                                else:
+                                    f_search2 = re.search(r"(.*)\/%s\/%s$" %(mode, ext), path_file)
+                                    if f_search2:
+                                        file_name = os.path.basename(f_search2.group(1))
+                                        df_samples.loc[len(df_samples)] = [path_file, dirN, file_name, ext, mode]    
+            
     ## debug message
     if (Debug):
         print (colored("**DEBUG: df_samples **", 'yellow'))
         print (df_samples)
-        print ("test OK")
     
     ## print stats
     number_samples = df_samples.index.size

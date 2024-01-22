@@ -39,19 +39,26 @@ def is_non_zero_file(fpath):
     """Returns TRUE/FALSE if file exists and non zero"""
     return os.path.isfile(fpath) and os.path.getsize(fpath) > 0
 
+
 ###############
-def outdir_project(outdir, project_mode, pd_samples, mode, debug):
+def outdir_project(outdir, project_mode, pd_samples, mode, debug, groupby_col="name"):
     """
     """
     # Group dataframe by sample name
-    sample_frame = pd_samples.groupby(["new_name"])
+    sample_frame = pd_samples.groupby([groupby_col])
+    ## The variable we use to groupby now is returned as a tuple. We will only need the first element in the tuple.
+    
     if (debug):
-        print ("+ Dataframe grouby variable 'new_name'")
+        print ("+ Dataframe grouby variable " + groupby_col)
 
     dict_outdir = {}    
-    for name, cluster in sample_frame:
+    for name_tuple, cluster in sample_frame:
+        name = name_tuple[0]
+    
         if (debug):
+            print(name)
             print (cluster)
+            
         if (project_mode):
             #print ("Create subdir for every sample: ", mode)
             sample_dir = create_subfolder('data', outdir)        
@@ -86,7 +93,7 @@ def outdir_project(outdir, project_mode, pd_samples, mode, debug):
 def create_subfolder (name, path):
     """Create a subfolder named 'name' in directory 'path'. Returns path created."""
     ## create subfolder  ##    
-    subfolder_path = path + "/" + name
+    subfolder_path = os.path.join(path, name)
     access_rights = 0o755
 
     # define the access rights
