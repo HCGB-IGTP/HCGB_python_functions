@@ -21,7 +21,6 @@ With different purposes:
 ## useful imports
 import sys
 from termcolor import colored
-import HCGB.functions.time_functions as HCGB_time
 
 ############################################################################
 ########                     AESTHETICS                             ########
@@ -44,7 +43,7 @@ def pipeline_header(option, ver=""):
         print('#', '{: ^66}'.format("RNAseq pipeline - RSP"), '#')
         print('#', '{: ^66}'.format("Jose F. Sanchez, Mireia Marin & Lauro Sumoy"), '#')
     
-    print('#', '{: ^66}'.format("Copyright (C) 2019-2022 Lauro Sumoy Lab, IGTP, Spain"), '#')
+    print('#', '{: ^66}'.format("Copyright (C) 2019-2024 Lauro Sumoy Lab, IGTP, Spain"), '#')
     
     ## add version
     if ver:
