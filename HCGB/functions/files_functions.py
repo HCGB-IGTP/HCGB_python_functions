@@ -53,10 +53,13 @@ def outdir_project(outdir, project_mode, pd_samples, mode, debug, groupby_col="n
 
     dict_outdir = {}    
     for name_tuple, cluster in sample_frame:
-        name = name_tuple[0]
+        ## this is producing errors
+        #name = name_tuple[0]
+        name = name_tuple
     
         if (debug):
             print(name)
+            print(name_tuple)
             print (cluster)
             
         if (project_mode):

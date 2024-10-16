@@ -84,7 +84,7 @@ def compare_info_dict(dict1, dict2, listItems, debug):
     print()
 
 ######################################
-def dump_info_conda(folder, module, debug):
+def dump_info_conda(folder, module, package_name="BacterialTyper", debug=False):
     """
     Prints information of the conda environment in yml format
     
@@ -98,31 +98,22 @@ def dump_info_conda(folder, module, debug):
     
     Example of information to include:
     
+    ...
     name: Bacterialtyper_dev
     channels:
       - bioconda
-      - conda-forge
       - defaults
     dependencies:
       - _libgcc_mutex=0.1=conda_forge
       - _openmp_mutex=4.5=2_gnu
       - _sysroot_linux-64_curr_repodata_hack=3=h69a702a_13
       - alsa-lib=1.2.10=hd590300_0
-      - any2fasta=0.4.2=hdfd78af_3
-      - aragorn=1.2.41=h031d066_1
-      - argtable2=2.13=h14c3975_1001
-      - asttokens=2.4.0=pyhd8ed1ab_0
-      - backcall=0.2.0=pyh9f0ad1d_0
-      - backports=1.0=pyhd8ed1ab_3
-      - backports.functools_lru_cache=1.6.5=pyhd8ed1ab_0
-      - barrnap=0.9=hdfd78af_4
-      - bcftools=1.18=h8b25389_0
       ...
 
     """
     
     ## Check if file exist and contains information
-    file_yml = os.path.join(folder, 'BacterialTyper.yml')
+    file_yml = os.path.join(folder, package_name + '.yml')
     
     ## if file exists and contains information
     if functions.files_functions.is_non_zero_file(file_yml):
@@ -134,21 +125,31 @@ def dump_info_conda(folder, module, debug):
         functions.system_call_functions.system_call(conda_export_call_tmp,  True, message=False)
         
         file_hash2 = read_filehash(file_yml + '_tmp')
-        ## remove tmp_file generated
-        os.remove(file_yml + '_tmp')
         
         ## if different, create a new file containing module name provided
+        if debug:
+            functions.aesthetics_functions.debug_message("Filehash:")
+            print("file_yml: " + file_yml)
+            print(file_hash.hexdigest())
+            
+            print("file_yml2: " + file_yml + '_tmp')
+            print(file_hash2.hexdigest())
+            
         if file_hash.hexdigest() == file_hash2.hexdigest():
+            if debug:
+                functions.aesthetics_functions.debug_message("Equal filehashes > Return")
+                
+            ## remove tmp_file generated
+            os.remove(file_yml + '_tmp')
+            
             return()
         else:
             data_string = functions.time_functions.create_human_timestamp()
             new_tag = data_string + '_' + module
-            file_yml = os.path.join(folder, new_tag + '_BacterialTyper.yml')
+            new_file_yml = os.path.join(folder, new_tag + '_' + package_name + '.yml')
     
-    ## create a system call to create:
-    conda_export_call = 'conda env export -f ' + file_yml
-    functions.system_call_functions.system_call(conda_export_call,  True, message=True)
-
+            ## rename file_yml + '_tmp' to new_file_yml
+            os.rename(file_yml + '_tmp', new_file_yml)
 
 
 ######################################
