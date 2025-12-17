@@ -247,7 +247,9 @@ def get_files(options, input_dir, mode, extension, debug, bam=False, append_disc
         'sccmec_typing',
         'final_contigs',
         'profile_summary',
-        'prodigal']
+        'prodigal',
+		'snps.unmapped', 
+		'gff.gz']
     
     ## extend list with new entries
     discard_list.extend(append_discard_list)
